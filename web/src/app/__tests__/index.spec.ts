@@ -21,18 +21,7 @@ describe("app", () => {
     <script src="./bundle.js"></script>`;
   });
   it("should render without error", () => {
-    init({
-      className: ".card",
-      title: "Beckhi",
-      content: "./public/images/beckhi.jpg",
-    });
-  });
-  it("should match snapshot", () => {
-    init({
-      className: ".card",
-      title: "Beckhi",
-      content: "./public/images/beckhi.jpg",
-    });
+    init();
     expect(window.document.body).toMatchSnapshot();
   });
 });

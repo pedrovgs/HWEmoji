@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf dist",
+    "start": "webpack serve -c webpack/webpack.config.dev.ts --mode=development",
     "prebuild": "npm run clean",
     "build": "NODE_ENV=production webpack -c webpack/webpack.config.prod.ts",
-    "start": "npm run build && serve dist -p 3001",
+    "build:serve": "npm run build && serve dist -p 6001",
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },
