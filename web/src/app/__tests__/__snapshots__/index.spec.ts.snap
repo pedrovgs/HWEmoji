@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`app should match snapshot 1`] = `
+exports[`app should render without error 1`] = `
 <body>
   
     
