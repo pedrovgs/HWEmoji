@@ -3861,6 +3861,11 @@ gauge@^3.0.0:
     strip-ansi "^6.0.1"
     wide-align "^1.1.2"
 
+gemoji@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/gemoji/-/gemoji-8.1.0.tgz#3d47a26e569c51efa95198822a6f483d7a7ae600"
+  integrity sha512-HA4Gx59dw2+tn+UAa7XEV4ufUKI4fH1KgcbenVA9YKSj1QJTT0xh5Mwv5HMFNN3l2OtUe3ZIfuRwSyZS5pLIWw==
+
 gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"

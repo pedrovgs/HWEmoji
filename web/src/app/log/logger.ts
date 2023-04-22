@@ -1,5 +1,5 @@
 const log = (message: string) => {
-    console.log(message, null, 2);
+    console.log(message);
 }
 
 export default log;
