@@ -1,5 +1,9 @@
+import { initUIComponents } from "../components";
 import log from "./log/logger";
 
-export function init() {
-  log("HWEmoji initialized 😃")
+export const init = async () => {
+  log("Initializing HWEmoji 😃")
+  await initUIComponents();
+  log("HWEmoji initialized 💪")
 }
+
