@@ -1,10 +1,11 @@
 import { Dropdown } from "materialize-css";
 import { gemoji, Gemoji } from "gemoji";
 import log from "../log/logger";
-import { WorkMode, ComponentsListeners, AppState } from "../domain/model";
+import { WorkMode, ComponentsListeners, AppState, Point } from "../domain/model";
 
 export const initUIComponents = async (listeners: ComponentsListeners, appState: AppState): Promise<void> => {
   await initMaterializeCssComponents(listeners);
+  initializeCanvas();
   updateEmojiPreview(appState.selectedEmoji);
 };
 
@@ -12,6 +13,52 @@ export const updateEmojiPreview = (gemoji: Gemoji) => {
   const emojiPreview = document.getElementById("emoji-sample");
   if (emojiPreview != null) {
     emojiPreview.textContent = gemoji.emoji;
+  }
+};
+
+const initializeCanvas = () => {
+  let lastButton = 0;
+  let points: Point[][] = [[]];
+  const canvas = document.getElementById("whiteboard") as HTMLCanvasElement;
+  const canvasBoundingRect = canvas.getBoundingClientRect();
+  const canvasLeft = canvasBoundingRect.x;
+  const canvasTop = canvasBoundingRect.y;
+  if (canvas !== null) {
+    const ctx = canvas.getContext("2d");
+    canvas.addEventListener("mousemove", (event) => {
+      if (event.buttons == 1) {
+        const point = { x: event.x - canvasLeft, y: event.y - canvasTop };
+        points[points.length - 1].push(point);
+        log(`Adding point at position: ${JSON.stringify(point)}`);
+        lastButton = 1;
+      } else if (event.buttons == 0 && lastButton == 1) {
+        points.push([]);
+        lastButton = 0;
+      }
+    });
+    if (ctx !== null) {
+      // Canvas trick to get better lines
+      ctx.translate(0.5, 0.5);
+      setInterval(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const numberOfPoints = points.length;
+        for (var i = 0; i < numberOfPoints; i++) {
+          const line = points[i];
+          if (line.length <= 0) continue;
+          ctx.strokeStyle = "#000000";
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(line[0].x, line[0].y);
+          for (var k = 1; k < points[i].length; k++) {
+            const point = points[i][k];
+            ctx.lineTo(point.x, point.y);
+          }
+          ctx.stroke();
+        }
+      }, 16);
+    }
   }
 };
 

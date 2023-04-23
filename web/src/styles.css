@@ -19,8 +19,6 @@ body {
 }
 
 #emoji-sample {
-  width: 400px;
-  height: 400px;
   font-size: 300px;
   line-height: 390px;
 }
@@ -28,5 +26,6 @@ body {
 #whiteboard {
   width: 400px;
   height: 400px;
-  background: red;
+  border: 1px solid;
+  border-color: black;
 }
