@@ -1,0 +1,31 @@
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+
+#draw-area {
+  justify-content: space-between;
+  display: flex;
+  gap: 4px;
+}
+
+#emoji-sample {
+  width: 400px;
+  height: 400px;
+  background: green;
+}
+
+#whiteboard {
+  width: 400px;
+  height: 400px;
+  background: red;
+}
