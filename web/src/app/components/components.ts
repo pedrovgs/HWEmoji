@@ -5,7 +5,9 @@ import { WorkMode, ComponentsListeners, AppState, Point } from "../domain/model"
 
 export const initUIComponents = async (listeners: ComponentsListeners, appState: AppState): Promise<void> => {
   await initMaterializeCssComponents(listeners);
-  initializeCanvas();
+  const canvas = initializeCanvas();
+  initializeSaveButton(canvas);
+  initializeCleanButton(canvas);
   updateEmojiPreview(appState.selectedEmoji);
 };
 
@@ -16,9 +18,11 @@ export const updateEmojiPreview = (gemoji: Gemoji) => {
   }
 };
 
-const initializeCanvas = () => {
+let points: Point[][] = [[]];
+let modifiedSinceLastDraw = false;
+
+const initializeCanvas = (): HTMLCanvasElement => {
   let lastButton = 0;
-  let points: Point[][] = [[]];
   const canvas = document.getElementById("whiteboard") as HTMLCanvasElement;
   const canvasBoundingRect = canvas.getBoundingClientRect();
   const canvasLeft = canvasBoundingRect.x;
@@ -29,18 +33,17 @@ const initializeCanvas = () => {
       if (event.buttons == 1) {
         const point = { x: event.x - canvasLeft, y: event.y - canvasTop };
         points[points.length - 1].push(point);
-        log(`Adding point at position: ${JSON.stringify(point)}`);
         lastButton = 1;
+        modifiedSinceLastDraw = true;
       } else if (event.buttons == 0 && lastButton == 1) {
         points.push([]);
         lastButton = 0;
       }
     });
     if (ctx !== null) {
-      // Canvas trick to get better lines
-      ctx.translate(0.5, 0.5);
       setInterval(() => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (!modifiedSinceLastDraw) return;
+        resetCanvasContent(canvas);
         const numberOfPoints = points.length;
         for (var i = 0; i < numberOfPoints; i++) {
           const line = points[i];
@@ -57,9 +60,34 @@ const initializeCanvas = () => {
           }
           ctx.stroke();
         }
+        modifiedSinceLastDraw = false;
       }, 16);
     }
   }
+  return canvas;
+};
+
+const initializeSaveButton = (canvas: HTMLCanvasElement) => {
+  document.getElementById("save-sample-button")?.addEventListener("click", () => {
+    resetSavedPoints();
+    resetCanvasContent(canvas);
+  });
+};
+
+const initializeCleanButton = (canvas: HTMLCanvasElement) => {
+  document.getElementById("clear-whiteboard-button")?.addEventListener("click", () => {
+    resetSavedPoints();
+    resetCanvasContent(canvas);
+  });
+};
+
+const resetSavedPoints = () => {
+  points = [[]];
+};
+
+const resetCanvasContent = (canvas: HTMLCanvasElement) => {
+  const ctx = canvas.getContext("2d");
+  ctx?.clearRect(0, 0, canvas.width, canvas.height);
 };
 
 const initMaterializeCssComponents = (listeners: ComponentsListeners): Promise<void> => {

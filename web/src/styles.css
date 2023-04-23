@@ -9,7 +9,7 @@ body {
   display: flex;
   justify-content: space-between;
   gap: 2px;
-  margin-bottom: 12px;
+  margin-top: 12px;
 }
 
 #draw-area {
