@@ -9,7 +9,7 @@ body {
   display: flex;
   justify-content: space-between;
   gap: 2px;
-  margin-bottom: 12px;
+  margin-top: 12px;
 }
 
 #draw-area {
@@ -19,13 +19,13 @@ body {
 }
 
 #emoji-sample {
-  width: 400px;
-  height: 400px;
-  background: green;
+  font-size: 300px;
+  line-height: 390px;
 }
 
 #whiteboard {
   width: 400px;
   height: 400px;
-  background: red;
+  border: 1px solid;
+  border-color: black;
 }

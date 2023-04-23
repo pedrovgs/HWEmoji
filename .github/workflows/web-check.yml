@@ -1,11 +1,11 @@
-name: Check
+name: Web Check
 on:
   pull_request:
     branches: [main]
   push:
     branches: [main]
 jobs:
-  build:
+  web-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -13,24 +13,20 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: yarn
-      - name: Restore cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}-
       - name: Install dependencies
         run: yarn install
+        working-directory: web
       - name: Prettier Check
         run: yarn lint
+        working-directory: web
       - name: Type Check
         run: yarn typecheck
+        working-directory: web
       - name: Unit test
         run: yarn test
+        working-directory: web
       - name: Build
         env:
           CI: false
         run: yarn build
+        working-directory: web

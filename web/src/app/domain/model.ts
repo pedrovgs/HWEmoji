@@ -14,3 +14,8 @@ export interface AppState {
   selectedEmoji: Gemoji;
   selectedMode: WorkMode;
 }
+
+export interface Point {
+  x: number;
+  y: number;
+}
