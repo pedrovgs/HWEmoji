@@ -1,4 +1,4 @@
-name: Check
+name: Web Check
 on:
   pull_request:
     branches: [main]
@@ -24,13 +24,18 @@ jobs:
             ${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}-
       - name: Install dependencies
         run: yarn install
+        working-directory: web
       - name: Prettier Check
         run: yarn lint
+        working-directory: web
       - name: Type Check
         run: yarn typecheck
+        working-directory: web
       - name: Unit test
         run: yarn test
+        working-directory: web
       - name: Build
         env:
           CI: false
         run: yarn build
+        working-directory: web
