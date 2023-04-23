@@ -15,14 +15,6 @@ jobs:
           node-version: 16.x
           cache: yarn
         working-directory: web
-      - name: Restore cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-          key: ${{ runner.os }}-${{ hashFiles('web/package-lock.json', 'web/yarn.lock', 'web/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ hashFiles('web/package-lock.json', 'web/yarn.lock', 'web/pnpm-lock.yaml') }}-
       - name: Install dependencies
         run: yarn install
         working-directory: web
