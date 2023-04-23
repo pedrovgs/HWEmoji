@@ -12,17 +12,12 @@
     "build": "NODE_ENV=production webpack -c webpack/webpack.config.prod.ts",
     "build:serve": "npm run build && serve dist -p 6001",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "NODE_ENV=test jest"
   },
   "repository": "git+https://github.com/pedrovgs/HWEmoji.git",
   "keywords": [],
   "author": "Pedro Gómez <pedrovicente.gomez@gmail.com>",
   "license": "MIT",
-  "lint-staged": {
-    "*.+(js|jsx|ts|tsx|json|css|md|mdx)": [
-      "prettier --write"
-    ]
-  },
   "devDependencies": {
     "@jest/types": "29.5.0",
     "@types/browser-sync-webpack-plugin": "2.2.2",
