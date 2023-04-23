@@ -1,10 +1,18 @@
 import { Dropdown } from "materialize-css";
 import { gemoji, Gemoji } from "gemoji";
 import log from "../log/logger";
-import { WorkMode, ComponentsListeners } from "../domain/model";
+import { WorkMode, ComponentsListeners, AppState } from "../domain/model";
 
-export const initUIComponents = async (listeners: ComponentsListeners): Promise<void> => {
+export const initUIComponents = async (listeners: ComponentsListeners, appState: AppState): Promise<void> => {
   await initMaterializeCssComponents(listeners);
+  updateEmojiPreview(appState.selectedEmoji);
+};
+
+export const updateEmojiPreview = (gemoji: Gemoji) => {
+  const emojiPreview = document.getElementById("emoji-sample");
+  if (emojiPreview != null) {
+    emojiPreview.textContent = gemoji.emoji;
+  }
 };
 
 const initMaterializeCssComponents = (listeners: ComponentsListeners): Promise<void> => {

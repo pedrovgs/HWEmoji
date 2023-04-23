@@ -21,7 +21,8 @@ body {
 #emoji-sample {
   width: 400px;
   height: 400px;
-  background: green;
+  font-size: 300px;
+  line-height: 390px;
 }
 
 #whiteboard {
