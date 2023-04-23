@@ -20,10 +20,9 @@ jobs:
         with:
           path: |
             node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          key: ${{ runner.os }}-${{ hashFiles('web/package-lock.json', 'web/yarn.lock', 'web/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
-            ${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}-
-        working-directory: web
+            ${{ runner.os }}-${{ hashFiles('web/package-lock.json', 'web/yarn.lock', 'web/pnpm-lock.yaml') }}-
       - name: Install dependencies
         run: yarn install
         working-directory: web
