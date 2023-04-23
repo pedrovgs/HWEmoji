@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "lint": "yarn prettier --check src",
+    "lint:fix": "yarn prettier --write src",
     "clean": "rimraf dist",
     "start": "webpack serve -c webpack/webpack.config.dev.ts --mode=development",
     "prebuild": "npm run clean",

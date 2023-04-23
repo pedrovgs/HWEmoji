@@ -1,16 +1,16 @@
 import { Gemoji } from "gemoji";
 
 export enum WorkMode {
-    collectData,
-    test
+  collectData,
+  test,
 }
 
 export type ComponentsListeners = {
-    onEmojiSelected: (gemoji: Gemoji) => void;
-    onModeSelected: (mode: WorkMode) =>  void
-}
+  onEmojiSelected: (gemoji: Gemoji) => void;
+  onModeSelected: (mode: WorkMode) => void;
+};
 
 export interface AppState {
-    selectedEmoji: Gemoji;
-    selectedMode: WorkMode;
+  selectedEmoji: Gemoji;
+  selectedMode: WorkMode;
 }
