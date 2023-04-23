@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
 jobs:
-  build:
+  web-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -14,6 +14,7 @@ jobs:
         with:
           node-version: 16.x
           cache: yarn
+        working-directory: web
       - name: Restore cache
         uses: actions/cache@v3
         with:
@@ -22,6 +23,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
             ${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}-
+        working-directory: web
       - name: Install dependencies
         run: yarn install
         working-directory: web
