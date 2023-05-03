@@ -1,8 +1,9 @@
 import { initUIComponents, updateEmojiPreview } from "./components/components";
 import log from "./log/logger";
 import { Gemoji } from "gemoji";
-import { WorkMode } from "./domain/model";
+import { Points, WorkMode } from "./domain/model";
 import { defaultAppState, selectEmoji, selectMode } from "./domain/state";
+import { saveDataSample } from "./__tests__/data/DataSaver";
 
 let appState = defaultAppState;
 
@@ -21,6 +22,18 @@ const componentsListener = () => {
     },
     onModeSelected: (mode: WorkMode) => {
       appState = selectMode(appState, mode);
+    },
+    onEmojiSaved: (points: Points) => {
+      if (points.length == 0) {
+        return;
+      }
+      const emoji = appState.selectedEmoji;
+      const sample = {
+        emoji: emoji.emoji,
+        emojiName: emoji.names[0],
+        points: points,
+      };
+      saveDataSample(sample);
     },
   };
   return listeners;
