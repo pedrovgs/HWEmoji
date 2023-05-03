@@ -1,7 +1,8 @@
-import { DataSample } from "../../domain/model";
-import log from "../../log/logger";
+import { DataSample } from "../domain/model";
+import log from "../log/logger";
 
 export const saveDataSample = (sample: DataSample) => {
+  log(`Generate raw file with sample data for sample = ${sample.emoji}`);
   const rawData = JSON.stringify(sample);
   const fileUrl = generateTextFileUrl(rawData);
   const linkTag = document.createElement("a");

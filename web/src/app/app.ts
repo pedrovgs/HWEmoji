@@ -3,7 +3,7 @@ import log from "./log/logger";
 import { Gemoji } from "gemoji";
 import { Points, WorkMode } from "./domain/model";
 import { defaultAppState, selectEmoji, selectMode } from "./domain/state";
-import { saveDataSample } from "./__tests__/data/DataSaver";
+import { saveDataSample } from "./data/DataSaver";
 
 let appState = defaultAppState;
 
