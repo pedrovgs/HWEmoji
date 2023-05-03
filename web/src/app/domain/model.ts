@@ -8,6 +8,7 @@ export enum WorkMode {
 export type ComponentsListeners = {
   onEmojiSelected: (gemoji: Gemoji) => void;
   onModeSelected: (mode: WorkMode) => void;
+  onEmojiSaved: (points: Points) => void;
 };
 
 export interface AppState {
@@ -19,3 +20,11 @@ export interface Point {
   x: number;
   y: number;
 }
+
+export interface DataSample {
+  emoji: string;
+  emojiName: string;
+  points: Points;
+}
+
+export type Points = Point[];

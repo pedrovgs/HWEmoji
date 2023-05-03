@@ -6,7 +6,7 @@ import { WorkMode, ComponentsListeners, AppState, Point } from "../domain/model"
 export const initUIComponents = async (listeners: ComponentsListeners, appState: AppState): Promise<void> => {
   await initMaterializeCssComponents(listeners);
   const canvas = initializeCanvas();
-  initializeSaveButton(canvas);
+  initializeSaveButton(listeners, canvas);
   initializeCleanButton(canvas);
   updateEmojiPreview(appState.selectedEmoji);
 };
@@ -67,8 +67,10 @@ const initializeCanvas = (): HTMLCanvasElement => {
   return canvas;
 };
 
-const initializeSaveButton = (canvas: HTMLCanvasElement) => {
+const initializeSaveButton = (listeners: ComponentsListeners, canvas: HTMLCanvasElement) => {
   document.getElementById("save-sample-button")?.addEventListener("click", () => {
+    const plainPoints = points.flat();
+    listeners.onEmojiSaved(plainPoints);
     resetSavedPoints();
     resetCanvasContent(canvas);
   });
