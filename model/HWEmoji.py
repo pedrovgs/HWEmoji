@@ -43,6 +43,14 @@ def augment_sample(sample):
         augmented_samples.append(up_shift_sample)
         down_shift_sample = np.roll(sample, int(sample_size * shift), axis=0)
         augmented_samples.append(down_shift_sample)
+        down_and_right_shift_sample = np.roll(down_shift_sample, int(sample_size * shift))
+        augmented_samples.append(down_and_right_shift_sample)
+        down_and_left_shift_sample = np.roll(down_shift_sample, int(sample_size * shift * -1))
+        augmented_samples.append(down_and_left_shift_sample)
+        up_and_right_shift_sample = np.roll(up_shift_sample, int(sample_size * shift))
+        augmented_samples.append(up_and_right_shift_sample)
+        up_and_left_shift_sample = np.roll(up_shift_sample, int(sample_size * shift * -1))
+        augmented_samples.append(up_and_left_shift_sample)
     return augmented_samples
 
 def read_file_content(path):
@@ -108,7 +116,6 @@ def generate_confusion_matrix(model, labels_test, test_score, test_predictions):
     all_sample_title = 'Accuracy Score: {0}'.format(test_score)
     plt.title(all_sample_title, size = 15);
     plt.savefig("./metrics/confusion_matrix.png")
-    print(model.classes_)
     print(f'    Confusion matrix index-emoji legend:')
     index = 0
     for label in model.classes_:
