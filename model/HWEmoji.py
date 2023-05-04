@@ -169,11 +169,11 @@ def generate_probability_text_report(model, labels_test, test_probability_predic
         individual_report = f'{header} => Expected: {labels_test[index]} - Got: {best_prediction_label}. Probability = {best_prediction_result} \n'
         report_file.write(individual_report)
     report_file.write("\n------------- Prediction probability -------------\n")
-    report_file.write(f'Predictions avobe 90% = {predictions_above_90_percent} - {(predictions_above_90_percent / test_data_set_size) * 100}%\n')
-    report_file.write(f'Predictions avobe 80% = {predictions_above_80_percent} - {(predictions_above_80_percent / test_data_set_size) * 100}%\n')
-    report_file.write(f'Predictions avobe 70% = {predictions_above_70_percent} - {(predictions_above_70_percent / test_data_set_size) * 100}%\n')
-    report_file.write(f'Predictions avobe 60% = {predictions_above_60_percent} - {(predictions_above_60_percent / test_data_set_size) * 100}%\n')
-    report_file.write(f'Predictions avobe 50% = {predictions_above_50_percent} - {(predictions_above_50_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Predictions above 90% = {predictions_above_90_percent} - {(predictions_above_90_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Predictions above 80% = {predictions_above_80_percent} - {(predictions_above_80_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Predictions above 70% = {predictions_above_70_percent} - {(predictions_above_70_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Predictions above 60% = {predictions_above_60_percent} - {(predictions_above_60_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Predictions above 50% = {predictions_above_50_percent} - {(predictions_above_50_percent / test_data_set_size) * 100}%\n')
     report_file.write("\n------------- Prediction per label -------------\n")
     for label in all_labels:
         report_file.write(f'Correct predictions for {label} = {(correct_perdictions_per_label[label] / predictions_per_label[label]) * 100}%. Correct = {correct_perdictions_per_label[label]}. Total = {predictions_per_label[label]}\n')

@@ -457,11 +457,11 @@
 ❌ => Expected: 😀 - Got: ✅. Probability = 0.21592565257101773 
 
 ------------- Prediction probability -------------
-Predictions avobe 90% = 4 - 0.8771929824561403%
-Predictions avobe 80% = 6 - 1.3157894736842104%
-Predictions avobe 70% = 8 - 1.7543859649122806%
-Predictions avobe 60% = 15 - 3.289473684210526%
-Predictions avobe 50% = 27 - 5.921052631578947%
+Predictions above 90% = 4 - 0.8771929824561403%
+Predictions above 80% = 6 - 1.3157894736842104%
+Predictions above 70% = 8 - 1.7543859649122806%
+Predictions above 60% = 15 - 3.289473684210526%
+Predictions above 50% = 27 - 5.921052631578947%
 
 ------------- Prediction per label -------------
 Correct predictions for 1️⃣ = 37.254901960784316%. Correct = 19. Total = 51
