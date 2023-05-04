@@ -11,6 +11,7 @@ from scipy.ndimage import rotate
 import time
 import skimage
 from skimage.transform import AffineTransform
+from skimage.transform import resize
 
 def prepare_data_set():
     dataset_folder = "../dataset/"
@@ -33,14 +34,15 @@ def prepare_data_set():
         for augmentation in augmentations:
             data.append(augmentation)
             labels.append(label)
-        #data = crop_data_samples(data)
+        data = crop_data_samples(data)
     return (data, labels)
 
 def crop_data_samples(data_samples):
     cropped_samples = []
     for sample in data_samples:
         cropped_sample = crop_data_sample(sample)
-        cropped_samples.append(cropped_sample)
+        cropped_and_resized_sample = resize(cropped_sample, (100, 100))
+        cropped_samples.append(cropped_and_resized_sample)
     return cropped_samples
 
 def crop_data_sample(sample):
@@ -53,7 +55,8 @@ def crop_data_sample(sample):
         out = np.empty((0,0),dtype=bool)
     return out
 
-normalized_value = lambda x: 1 if x >= 0.5 else 0
+# Only needed for some specific ocations
+normalized_value = lambda x: 1 if x >= 0.1 else 0
 map_to_zero_or_one =  np.vectorize(normalized_value)
 
 def augment_sample(sample):
@@ -84,8 +87,7 @@ def augment_sample(sample):
         # This augmentation one generates values that are not 0s or 1s, that's why we have to
         # normalize the values to 0 or 1
         rotated_sample = rotate(sample, angle=rotation_angle, reshape=False)
-        normalized_rotated_sample = map_to_zero_or_one(rotated_sample)
-        augmented_samples.append(normalized_rotated_sample)
+        augmented_samples.append(rotated_sample)
     # It is likely if we crop images we won't need this one, so we will remove it soon 
     # and we expect to maintain or even get the same result.
     scale_values = [0.95, 0.9, 0.85, 0.8, 0.75, 0.7]
@@ -94,8 +96,7 @@ def augment_sample(sample):
         # normalize the values to 0 or 1
         scale_transform = AffineTransform(scale = scale)
         rescaled_sample = skimage.transform.warp(sample, scale_transform.inverse)
-        normalized_rescaled_sample = map_to_zero_or_one(rescaled_sample)
-        augmented_samples.append(normalized_rescaled_sample)
+        augmented_samples.append(rescaled_sample)
     return filter(sample_is_not_empty, augmented_samples)
 
 def show_sample(sample):
