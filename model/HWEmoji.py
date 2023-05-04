@@ -30,12 +30,12 @@ def transform_emoji_points(points):
     for point in points:
         x = int(point["x"])
         y = int(point["y"])
-        black_and_white_points[x][y] = 1;
+        black_and_white_points[y][x] = 1;
     return black_and_white_points.flatten()
 
 def train_model(data, labels):
     print("⏲  Starting the training process")
-    data_train, data_test, labels_train, labels_test = train_test_split(data, labels, test_size=0.25, random_state=0)
+    data_train, data_test, labels_train, labels_test = train_test_split(data, labels, train_size=0.9, random_state=0)
     print("🖖 Dataset divided into: ")
     print("     Data  train size: ", len(data_train))
     print("     Label train size: ", len(labels_train))
@@ -50,7 +50,7 @@ def train_model(data, labels):
     # Here we can find all the model classes logistic_regression.classes_
     # We can use logistic_regression.predict_log_proba(test_element) to get the probability value
     test_prediction = logistic_regression.predict(test_element)
-    print(f'    Model tested after trainign expecting {expected_label_for_test_element} and got ${test_prediction}')
+    print(f'    Model tested after trainign expecting {expected_label_for_test_element} and got {test_prediction}')
     return (logistic_regression, data_train, data_test, labels_train, labels_test)
 
 def evaluate_model_accuracy(model, data_train, data_test, labels_train, labels_test):
@@ -60,11 +60,21 @@ def evaluate_model_accuracy(model, data_train, data_test, labels_train, labels_t
     print(f'    Test  score = {test_score}')
     print(f'    Train score = {train_score}')
 
+def show_some_data_examples(data, labels, number_of_samples):
+    print("🔍 Showing some data examples")
+    for index, (image, label) in enumerate(zip(data[0:number_of_samples], labels[0:number_of_samples])):
+        print(f'    Preparing visual representation of {label} for sample number: {index}')
+        reshaped_image = np.reshape(image, (400,400))
+        plt.imshow(reshaped_image)
+        plt.show()
+    
+
 def main():
     print("😃 Initializing HWEmoji training script")
     print("🤓 Preparing trainig data using the files from /dataset")
     data, labels = prepare_data_set()
     model, data_train, data_test, labels_train, labels_test = train_model(data, labels)
+    #show_some_data_examples(data_test, labels_test, 5)
     print(f'💪 Model trained with {len(data_train)} samples. Evaluating model accuracy')
     evaluate_model_accuracy(model, data_train, data_test, labels_train, labels_test)
     print("✅ Model updated and saved")
