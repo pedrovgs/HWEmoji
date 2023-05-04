@@ -75,7 +75,7 @@ def train_model(data, labels):
     print("     Label train size: ", len(labels_train))
     print("     Data   test size: ", len(data_test))
     print("     Label  test size: ", len(labels_test))
-    logistic_regression = LogisticRegression(solver = 'lbfgs')
+    logistic_regression = LogisticRegression(verbose= True)
     print("⌛️ Training the model")
     logistic_regression.fit(data_train, labels_train)
     print("✅ Model training completed. Evaluating for one element")
