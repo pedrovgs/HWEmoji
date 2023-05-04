@@ -29,7 +29,26 @@ def prepare_data_set():
 
 def augment_sample(sample):
     sample_flipped_horizontally = np.fliplr(sample)
-    return [sample_flipped_horizontally]
+    sample_size = 400
+    sample_shifted_right_10_percent = np.roll(sample, int(sample_size * 0.1))
+    sample_shifted_right_5_percent = np.roll(sample, int(sample_size * 0.05))
+    sample_shifted_left_10_percent = np.roll(sample, int(sample_size * -0.1))
+    sample_shifted_left_5_percent = np.roll(sample, int(sample_size * -0.05))
+    sample_shifted_up_10_percent = np.roll(sample, int(sample_size * -0.1), axis=0)
+    sample_shifted_up_5_percent = np.roll(sample, int(sample_size * -0.05), axis=0)
+    sample_shifted_down_10_percent = np.roll(sample, int(sample_size * 0.1), axis=0)
+    sample_shifted_down_5_percent = np.roll(sample, int(sample_size * 0.05), axis=0)
+    return [
+        sample_flipped_horizontally, 
+        sample_shifted_right_10_percent,
+        sample_shifted_right_5_percent,
+        sample_shifted_left_10_percent,
+        sample_shifted_left_5_percent,
+        sample_shifted_up_10_percent,
+        sample_shifted_up_5_percent,
+        sample_shifted_down_10_percent,
+        sample_shifted_down_5_percent
+    ]
 
 def read_file_content(path):
     file = open(path, "r")
@@ -107,7 +126,7 @@ def main():
     print("😃 Initializing HWEmoji training script")
     print("🤓 Preparing trainig data using the files from /dataset")
     data, labels = prepare_data_set()
-    #show_some_data_examples(data, labels, 10)
+    # show_some_data_examples(data, labels, 10)
     model, data_train, data_test, labels_train, labels_test = train_model(data, labels)
     print(f'💪 Model trained with {len(data_train)} samples. Evaluating model accuracy')
     evaluate_model_accuracy(model, data_train, data_test, labels_train, labels_test)
