@@ -8,7 +8,7 @@ export const saveDataSample = (sample: DataSample) => {
   const linkTag = document.createElement("a");
   linkTag.href = fileUrl;
   const currentTimestamp = Date.now();
-  linkTag.download = `${sample.emoji}-${sample.emojiName}-${currentTimestamp}.txt`;
+  linkTag.download = `${currentTimestamp}-${sample.emojiName}-${sample.emoji}.txt`;
   document.getElementById("body")?.appendChild(linkTag);
   linkTag.click();
   linkTag.remove();
