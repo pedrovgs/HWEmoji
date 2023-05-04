@@ -89,7 +89,9 @@ def train_model(data, labels):
     print("     Label train size: ", len(labels_train))
     print("     Data   test size: ", len(data_test))
     print("     Label  test size: ", len(labels_test))
-    logistic_regression = LogisticRegression(n_jobs = os.cpu_count(), verbose=True)
+    # solver = "saga", max_iter = 50 got the best results in terms of accuracy,
+    # but training the model takes forever.
+    logistic_regression = LogisticRegression(n_jobs = os.cpu_count(), verbose = True)
     print("⌛️ Training the model")
     start_time = time.time()
     logistic_regression.fit(data_train, labels_train)
@@ -112,6 +114,8 @@ def evaluate_model_accuracy(model, data_train, data_test, labels_train, labels_t
     print(f'    Train score = {train_score}')
     generate_confusion_matrix(model, labels_test, test_score, test_predictions)
     generate_classification_text_report(labels_test, test_predictions)
+    test_probablity_predictions = model.predict_proba(data_test)
+    generate_probability_text_report(model, labels_test, test_probablity_predictions)
 
 def generate_classification_text_report(labels_test, test_predictions):
     report_file = open("./metrics/test_prediction_report.txt", "w")
@@ -121,6 +125,64 @@ def generate_classification_text_report(labels_test, test_predictions):
         result = "✅" if labels_test[index] == test_predictions[index] else "❌"
         individual_report = f'{result} => Expected: {labels_test[index]} - Got: {test_predictions[index]} \n'
         report_file.write(individual_report)
+    report_file.close()
+
+def generate_probability_text_report(model, labels_test, test_probability_predictions):
+    print("📏 Evaluating model accuracy based on classification probability")
+    all_labels = model.classes_
+    report_file = open("./metrics/test_probability_prediction_report.txt", "w")
+    test_data_set_size = len(test_probability_predictions) 
+    report_file.write(f'📊 Test probability prediction report for {test_data_set_size} elements\n')
+    predictions_above_90_percent = 0
+    predictions_above_80_percent = 0
+    predictions_above_70_percent = 0
+    predictions_above_60_percent = 0
+    predictions_above_50_percent = 0
+    correct_perdictions_per_label = dict.fromkeys(all_labels, 0)
+    predictions_per_label = dict.fromkeys(all_labels, 0)
+    for index in range(test_data_set_size):
+        prediction_result = test_probability_predictions[index]
+        best_prediction_result = -1
+        best_prediction_label = 0
+        label_index = 0
+        for label_index in range(len(all_labels)):
+            label = model.classes_[label_index]
+            label_probability = prediction_result[label_index]
+            if label_probability > best_prediction_result:
+                best_prediction_result = prediction_result[label_index]
+                best_prediction_label = label
+        predictions_per_label[best_prediction_label] += 1
+        prediction_correct = labels_test[index] == best_prediction_label
+        if (prediction_correct):
+            correct_perdictions_per_label[best_prediction_label] += 1
+        if (best_prediction_result >= 0.9):
+            predictions_above_90_percent += 1
+        if (best_prediction_result >= 0.8):
+            predictions_above_80_percent += 1
+        if (best_prediction_result >= 0.7):
+            predictions_above_70_percent += 1
+        if (best_prediction_result >= 0.6):
+            predictions_above_60_percent += 1
+        if (best_prediction_result >= 0.5):
+            predictions_above_50_percent += 1
+        header = "✅" if prediction_correct else "❌"
+        individual_report = f'{header} => Expected: {labels_test[index]} - Got: {best_prediction_label}. Probability = {best_prediction_result} \n'
+        report_file.write(individual_report)
+    report_file.write("\n------------- Prediction probability -------------\n")
+    report_file.write(f'Predictions avobe 90% = {predictions_above_90_percent} - {(predictions_above_90_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Predictions avobe 80% = {predictions_above_80_percent} - {(predictions_above_80_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Predictions avobe 70% = {predictions_above_70_percent} - {(predictions_above_70_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Predictions avobe 60% = {predictions_above_60_percent} - {(predictions_above_60_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Predictions avobe 50% = {predictions_above_50_percent} - {(predictions_above_50_percent / test_data_set_size) * 100}%\n')
+    report_file.write("\n------------- Prediction per label -------------\n")
+    for label in all_labels:
+        report_file.write(f'Correct predictions for {label} = {(correct_perdictions_per_label[label] / predictions_per_label[label]) * 100}%. Correct = {correct_perdictions_per_label[label]}. Total = {predictions_per_label[label]}\n')
+    correct_preciction_percentage = dict.fromkeys(all_labels, "")
+    for label in all_labels:
+        correct_preciction_percentage[label] = f'{correct_perdictions_per_label[label] / predictions_per_label[label] * 100}%'
+    print(f'    Acc per label:{correct_perdictions_per_label}' )
+    print(f'    Predictions per label:{predictions_per_label}' )
+    print(f'    Acc % per label:{correct_preciction_percentage}' )
     report_file.close()
 
 def generate_confusion_matrix(model, labels_test, test_score, test_predictions):
