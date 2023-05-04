@@ -34,10 +34,10 @@ def prepare_data_set():
         for augmentation in augmentations:
             data.append(augmentation)
             labels.append(label)
-        data = crop_data_samples(data)
+        data = crop_data_samples(data, label)
     return (data, labels)
 
-def crop_data_samples(data_samples):
+def crop_data_samples(data_samples, label):
     cropped_samples = []
     for sample in data_samples:
         cropped_sample = crop_data_sample(sample)
@@ -56,7 +56,7 @@ def crop_data_sample(sample):
     return out
 
 # Only needed for some specific ocations
-normalized_value = lambda x: 1 if x >= 0.1 else 0
+normalized_value = lambda x: 1 if x > 0.05 else 0
 map_to_zero_or_one =  np.vectorize(normalized_value)
 
 def augment_sample(sample):
@@ -99,9 +99,13 @@ def augment_sample(sample):
         augmented_samples.append(rescaled_sample)
     return filter(sample_is_not_empty, augmented_samples)
 
-def show_sample(sample):
-    plt.imshow(sample)
-    plt.show()
+samples_shown = 0
+def show_sample(sample, samples_to_show = 1):
+    global samples_shown
+    if samples_shown < samples_to_show:
+        plt.imshow(sample)
+        plt.show()
+        samples_shown += 1
 
 def show_sample_if_contains_artifacts(sample):
     for x in sample:
@@ -259,8 +263,7 @@ def show_some_data_examples(data, labels, number_of_samples):
     print("🔍 Showing some data examples")
     for index, (image, label) in enumerate(zip(data[0:number_of_samples], labels[0:number_of_samples])):
         print(f'    Preparing visual representation of {label} for sample number: {index}')
-        reshaped_image = np.reshape(image, (400,400))
-        plt.imshow(reshaped_image)
+        plt.imshow(image)
         plt.show()
 
 def main():
