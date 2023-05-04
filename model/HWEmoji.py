@@ -1,7 +1,6 @@
 import os
 import json
 import numpy as np
-import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 import matplotlib.pyplot as plt
@@ -23,6 +22,9 @@ def prepare_data_set():
         raw_sample = read_file_content(sample_path);
         parsed_sample = json.loads(raw_sample);
         transformed_sample = transform_emoji_points(parsed_sample["points"])
+        if (sample_is_empty(transformed_sample)):
+            print(f'☢️☢️☢️   Check sample in path {sample_path}. It is empty! ☢️☢️☢️')
+            continue
         label = parsed_sample["emoji"]
         data.append(transformed_sample)
         labels.append(label)
@@ -31,15 +33,28 @@ def prepare_data_set():
         for augmentation in augmentations:
             data.append(augmentation)
             labels.append(label)
-        data = crop_data_samples(data)
+        #data = crop_data_samples(data)
     return (data, labels)
 
 def crop_data_samples(data_samples):
     cropped_samples = []
     for sample in data_samples:
-        cropped_sample = sample
+        cropped_sample = crop_data_sample(sample)
         cropped_samples.append(cropped_sample)
     return cropped_samples
+
+def crop_data_sample(sample):
+    r = sample.any(1)
+    if r.any():
+        m,n = sample.shape
+        c = sample.any(0)
+        out = sample[r.argmax():m-r[::-1].argmax(), c.argmax():n-c[::-1].argmax()]
+    else:
+        out = np.empty((0,0),dtype=bool)
+    return out
+
+normalized_value = lambda x: 1 if x >= 0.5 else 0
+map_to_zero_or_one =  np.vectorize(normalized_value)
 
 def augment_sample(sample):
     augmented_samples = []
@@ -66,14 +81,38 @@ def augment_sample(sample):
         augmented_samples.append(up_and_left_shift_sample)
     rotate_values = [5, 10, 15, 20, 25, 30, 35, 40, 45]
     for rotation_angle in rotate_values:
+        # This augmentation one generates values that are not 0s or 1s, that's why we have to
+        # normalize the values to 0 or 1
         rotated_sample = rotate(sample, angle=rotation_angle, reshape=False)
-        augmented_samples.append(rotated_sample)
+        normalized_rotated_sample = map_to_zero_or_one(rotated_sample)
+        augmented_samples.append(normalized_rotated_sample)
+    # It is likely if we crop images we won't need this one, so we will remove it soon 
+    # and we expect to maintain or even get the same result.
     scale_values = [0.95, 0.9, 0.85, 0.8, 0.75, 0.7]
     for scale in scale_values:
+        # This augmentation one generates values that are not 0s or 1s, that's why we have to
+        # normalize the values to 0 or 1
         scale_transform = AffineTransform(scale = scale)
         rescaled_sample = skimage.transform.warp(sample, scale_transform.inverse)
-        augmented_samples.append(rescaled_sample)
-    return augmented_samples
+        normalized_rescaled_sample = map_to_zero_or_one(rescaled_sample)
+        augmented_samples.append(normalized_rescaled_sample)
+    return filter(sample_is_not_empty, augmented_samples)
+
+def show_sample(sample):
+    plt.imshow(sample)
+    plt.show()
+
+def show_sample_if_contains_artifacts(sample):
+    for x in sample:
+        for y in x:
+            if (y != 0.0 and y != 1.0):
+                show_sample(sample)
+
+def sample_is_empty(sample):
+    return not sample_is_not_empty(sample)
+
+def sample_is_not_empty(sample):
+    return np.count_nonzero(sample) > 0
 
 def read_file_content(path):
     file = open(path, "r")
@@ -187,10 +226,14 @@ def generate_probability_text_report(model, labels_test, test_probability_predic
     report_file.write(f'Predictions above 50% = {predictions_above_50_percent} - {(predictions_above_50_percent / test_data_set_size) * 100}%\n')
     report_file.write("\n------------- Prediction per label -------------\n")
     for label in all_labels:
-        report_file.write(f'Correct predictions for {label} = {(correct_perdictions_per_label[label] / predictions_per_label[label]) * 100}%. Correct = {correct_perdictions_per_label[label]}. Total = {predictions_per_label[label]}\n')
+        if (predictions_per_label[label] == 0):
+            print(f'☢️☢️☢️  Label {label} has 0 predictions ☢️☢️☢️')
+        else:
+            report_file.write(f'Correct predictions for {label} = {(correct_perdictions_per_label[label] / predictions_per_label[label]) * 100}%. Correct = {correct_perdictions_per_label[label]}. Total = {predictions_per_label[label]}\n')
     correct_preciction_percentage = dict.fromkeys(all_labels, "")
     for label in all_labels:
-        correct_preciction_percentage[label] = f'{correct_perdictions_per_label[label] / predictions_per_label[label] * 100}%'
+        if (predictions_per_label[label] != 0):
+            correct_preciction_percentage[label] = f'{correct_perdictions_per_label[label] / predictions_per_label[label] * 100}%'
     print(f'    Acc per label:{correct_perdictions_per_label}' )
     print(f'    Predictions per label:{predictions_per_label}' )
     print(f'    Acc % per label:{correct_preciction_percentage}' )
