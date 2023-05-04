@@ -1,12 +1,15 @@
 import os
 import json
 import numpy as np
+import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 import matplotlib.pyplot as plt
 from sklearn import metrics
 import seaborn as sns
 from matplotlib.font_manager import FontProperties
+from scipy.ndimage import rotate
+import time
 
 def prepare_data_set():
     dataset_folder = "../dataset/"
@@ -51,6 +54,10 @@ def augment_sample(sample):
         augmented_samples.append(up_and_right_shift_sample)
         up_and_left_shift_sample = np.roll(up_shift_sample, int(sample_size * shift * -1))
         augmented_samples.append(up_and_left_shift_sample)
+    rotate_values = [5, 10, 15, 20, 25, 30, 35, 40, 45]
+    for rotation_angle in rotate_values:
+        rotated_sample = rotate(sample, angle=rotation_angle, reshape=False)
+        augmented_samples.append(rotated_sample)
     return augmented_samples
 
 def read_file_content(path):
@@ -75,10 +82,12 @@ def train_model(data, labels):
     print("     Label train size: ", len(labels_train))
     print("     Data   test size: ", len(data_test))
     print("     Label  test size: ", len(labels_test))
-    logistic_regression = LogisticRegression(verbose= True)
+    logistic_regression = LogisticRegression(n_jobs = os.cpu_count(), verbose=True)
     print("⌛️ Training the model")
+    start_time = time.time()
     logistic_regression.fit(data_train, labels_train)
-    print("✅ Model training completed. Evaluating for one element")
+    end_time = time.time()
+    print(f'✅ Model training completed. Training time {end_time - start_time} seconds')
     test_element = data_test[0].reshape(1,-1)
     expected_label_for_test_element = labels_test[0]
     # Here we can find all the model classes logistic_regression.classes_
