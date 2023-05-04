@@ -6,6 +6,7 @@ from sklearn.linear_model import LogisticRegression
 import matplotlib.pyplot as plt
 from sklearn import metrics
 import seaborn as sns
+from matplotlib.font_manager import FontProperties
 
 def prepare_data_set():
     dataset_folder = "../dataset/"
@@ -28,27 +29,21 @@ def prepare_data_set():
     return (data, labels)
 
 def augment_sample(sample):
+    augmented_samples = []
     sample_flipped_horizontally = np.fliplr(sample)
+    augmented_samples.append(sample_flipped_horizontally)
     sample_size = 400
-    sample_shifted_right_10_percent = np.roll(sample, int(sample_size * 0.1))
-    sample_shifted_right_5_percent = np.roll(sample, int(sample_size * 0.05))
-    sample_shifted_left_10_percent = np.roll(sample, int(sample_size * -0.1))
-    sample_shifted_left_5_percent = np.roll(sample, int(sample_size * -0.05))
-    sample_shifted_up_10_percent = np.roll(sample, int(sample_size * -0.1), axis=0)
-    sample_shifted_up_5_percent = np.roll(sample, int(sample_size * -0.05), axis=0)
-    sample_shifted_down_10_percent = np.roll(sample, int(sample_size * 0.1), axis=0)
-    sample_shifted_down_5_percent = np.roll(sample, int(sample_size * 0.05), axis=0)
-    return [
-        sample_flipped_horizontally, 
-        sample_shifted_right_10_percent,
-        sample_shifted_right_5_percent,
-        sample_shifted_left_10_percent,
-        sample_shifted_left_5_percent,
-        sample_shifted_up_10_percent,
-        sample_shifted_up_5_percent,
-        sample_shifted_down_10_percent,
-        sample_shifted_down_5_percent
-    ]
+    shift_values = [0.1, 0.08, 0.06, 0.04, 0.02]
+    for shift in shift_values:
+        right_shift_sample = np.roll(sample, int(sample_size * shift))
+        augmented_samples.append(right_shift_sample)
+        left_shift_sample = np.roll(sample, int(sample_size * shift * -1))
+        augmented_samples.append(left_shift_sample)
+        up_shift_sample = np.roll(sample, int(sample_size * shift * -1), axis=0)
+        augmented_samples.append(up_shift_sample)
+        down_shift_sample = np.roll(sample, int(sample_size * shift), axis=0)
+        augmented_samples.append(down_shift_sample)
+    return augmented_samples
 
 def read_file_content(path):
     file = open(path, "r")
@@ -91,7 +86,7 @@ def evaluate_model_accuracy(model, data_train, data_test, labels_train, labels_t
     test_predictions = model.predict(data_test)
     print(f'    Test  score = {test_score}')
     print(f'    Train score = {train_score}')
-    generate_confusion_matrix(labels_test, test_score, test_predictions)
+    generate_confusion_matrix(model, labels_test, test_score, test_predictions)
     generate_classification_text_report(labels_test, test_predictions)
 
 def generate_classification_text_report(labels_test, test_predictions):
@@ -104,7 +99,7 @@ def generate_classification_text_report(labels_test, test_predictions):
         report_file.write(individual_report)
     report_file.close()
 
-def generate_confusion_matrix(labels_test, test_score, test_predictions):
+def generate_confusion_matrix(model, labels_test, test_score, test_predictions):
     confusion_matrix = metrics.confusion_matrix(labels_test, test_predictions)
     plt.figure(figsize=(9,9))
     sns.heatmap(confusion_matrix, annot=True, fmt=".3f", linewidths=.5, square = True, cmap = 'Blues_r');
@@ -113,6 +108,12 @@ def generate_confusion_matrix(labels_test, test_score, test_predictions):
     all_sample_title = 'Accuracy Score: {0}'.format(test_score)
     plt.title(all_sample_title, size = 15);
     plt.savefig("./metrics/confusion_matrix.png")
+    print(model.classes_)
+    print(f'    Confusion matrix index-emoji legend:')
+    index = 0
+    for label in model.classes_:
+        print(f'        {index} - {label}')
+        index += 1
 
 def show_some_data_examples(data, labels, number_of_samples):
     print("🔍 Showing some data examples")
