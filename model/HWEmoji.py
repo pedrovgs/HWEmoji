@@ -10,6 +10,8 @@ import seaborn as sns
 from matplotlib.font_manager import FontProperties
 from scipy.ndimage import rotate
 import time
+import skimage
+from skimage.transform import AffineTransform
 
 def prepare_data_set():
     dataset_folder = "../dataset/"
@@ -58,6 +60,11 @@ def augment_sample(sample):
     for rotation_angle in rotate_values:
         rotated_sample = rotate(sample, angle=rotation_angle, reshape=False)
         augmented_samples.append(rotated_sample)
+    scale_values = [0.95, 0.9, 0.85, 0.8, 0.75, 0.7]
+    for scale in scale_values:
+        scale_transform = AffineTransform(scale = scale)
+        rescaled_sample = skimage.transform.warp(sample, scale_transform.inverse)
+        augmented_samples.append(rescaled_sample)
     return augmented_samples
 
 def read_file_content(path):
@@ -143,7 +150,7 @@ def main():
     print("😃 Initializing HWEmoji training script")
     print("🤓 Preparing trainig data using the files from /dataset")
     data, labels = prepare_data_set()
-    # show_some_data_examples(data, labels, 10)
+    #show_some_data_examples(data, labels, 10)
     model, data_train, data_test, labels_train, labels_test = train_model(data, labels)
     print(f'💪 Model trained with {len(data_train)} samples. Evaluating model accuracy')
     evaluate_model_accuracy(model, data_train, data_test, labels_train, labels_test)

@@ -3,3 +3,4 @@ scikit-learn
 matplotlib
 numpy
 seaborn
+scikit-image
