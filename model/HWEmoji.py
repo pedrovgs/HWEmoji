@@ -16,9 +16,20 @@ def prepare_data_set():
         sample_path = dataset_folder + sample;
         raw_sample = read_file_content(sample_path);
         parsed_sample = json.loads(raw_sample);
-        data.append(transform_emoji_points(parsed_sample["points"]))
-        labels.append(parsed_sample["emoji"])
+        transformed_sample = transform_emoji_points(parsed_sample["points"])
+        label = parsed_sample["emoji"]
+        data.append(transformed_sample.flatten())
+        labels.append(label)
+        # We improve our data set by generating more samples based on the original but with some modifications
+        augmentations = augment_sample(transformed_sample)
+        for augmentation in augmentations:
+            data.append(augmentation.flatten())
+            labels.append(label)
     return (data, labels)
+
+def augment_sample(sample):
+    sample_flipped_horizontally = np.fliplr(sample)
+    return [sample_flipped_horizontally]
 
 def read_file_content(path):
     file = open(path, "r")
@@ -32,7 +43,7 @@ def transform_emoji_points(points):
         x = int(point["x"])
         y = int(point["y"])
         black_and_white_points[y][x] = 1;
-    return black_and_white_points.flatten()
+    return black_and_white_points;
 
 def train_model(data, labels):
     print("⏲  Starting the training process")
@@ -58,9 +69,23 @@ def evaluate_model_accuracy(model, data_train, data_test, labels_train, labels_t
     print("📏 Evaluating model accuracy using the test and train data")
     train_score = model.score(data_train, labels_train)
     test_score = model.score(data_test, labels_test)
+    test_predictions = model.predict(data_test)
     print(f'    Test  score = {test_score}')
     print(f'    Train score = {train_score}')
-    test_predictions = model.predict(data_test)
+    generate_confusion_matrix(labels_test, test_score, test_predictions)
+    generate_classification_text_report(labels_test, test_predictions)
+
+def generate_classification_text_report(labels_test, test_predictions):
+    report_file = open("./metrics/test_prediction_report.txt", "w")
+    test_data_set_size = len(test_predictions) 
+    report_file.write(f'📊 Test prediction report for {test_data_set_size} elements\n')
+    for index in range(test_data_set_size):
+        result = "✅" if labels_test[index] == test_predictions[index] else "❌"
+        individual_report = f'{result} => Expected: {labels_test[index]} - Got: {test_predictions[index]} \n'
+        report_file.write(individual_report)
+    report_file.close()
+
+def generate_confusion_matrix(labels_test, test_score, test_predictions):
     confusion_matrix = metrics.confusion_matrix(labels_test, test_predictions)
     plt.figure(figsize=(9,9))
     sns.heatmap(confusion_matrix, annot=True, fmt=".3f", linewidths=.5, square = True, cmap = 'Blues_r');
@@ -68,7 +93,7 @@ def evaluate_model_accuracy(model, data_train, data_test, labels_train, labels_t
     plt.xlabel('Predicted label');
     all_sample_title = 'Accuracy Score: {0}'.format(test_score)
     plt.title(all_sample_title, size = 15);
-    plt.show()
+    plt.savefig("./metrics/confusion_matrix.png")
 
 def show_some_data_examples(data, labels, number_of_samples):
     print("🔍 Showing some data examples")
@@ -82,8 +107,8 @@ def main():
     print("😃 Initializing HWEmoji training script")
     print("🤓 Preparing trainig data using the files from /dataset")
     data, labels = prepare_data_set()
+    #show_some_data_examples(data, labels, 10)
     model, data_train, data_test, labels_train, labels_test = train_model(data, labels)
-    #show_some_data_examples(data_test, labels_test, 5)
     print(f'💪 Model trained with {len(data_train)} samples. Evaluating model accuracy')
     evaluate_model_accuracy(model, data_train, data_test, labels_train, labels_test)
     print("✅ Model updated and saved")
