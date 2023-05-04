@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 import matplotlib.pyplot as plt
 from sklearn import metrics
+import seaborn as sns
 
 def prepare_data_set():
     dataset_folder = "../dataset/"
@@ -59,6 +60,15 @@ def evaluate_model_accuracy(model, data_train, data_test, labels_train, labels_t
     test_score = model.score(data_test, labels_test)
     print(f'    Test  score = {test_score}')
     print(f'    Train score = {train_score}')
+    test_predictions = model.predict(data_test)
+    confusion_matrix = metrics.confusion_matrix(labels_test, test_predictions)
+    plt.figure(figsize=(9,9))
+    sns.heatmap(confusion_matrix, annot=True, fmt=".3f", linewidths=.5, square = True, cmap = 'Blues_r');
+    plt.ylabel('Actual label');
+    plt.xlabel('Predicted label');
+    all_sample_title = 'Accuracy Score: {0}'.format(test_score)
+    plt.title(all_sample_title, size = 15);
+    plt.show()
 
 def show_some_data_examples(data, labels, number_of_samples):
     print("🔍 Showing some data examples")
@@ -67,7 +77,6 @@ def show_some_data_examples(data, labels, number_of_samples):
         reshaped_image = np.reshape(image, (400,400))
         plt.imshow(reshaped_image)
         plt.show()
-    
 
 def main():
     print("😃 Initializing HWEmoji training script")
