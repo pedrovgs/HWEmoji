@@ -24,14 +24,22 @@ def prepare_data_set():
         parsed_sample = json.loads(raw_sample);
         transformed_sample = transform_emoji_points(parsed_sample["points"])
         label = parsed_sample["emoji"]
-        data.append(transformed_sample.flatten())
+        data.append(transformed_sample)
         labels.append(label)
         # We improve our data set by generating more samples based on the original but with some modifications
         augmentations = augment_sample(transformed_sample)
         for augmentation in augmentations:
-            data.append(augmentation.flatten())
+            data.append(augmentation)
             labels.append(label)
+        data = crop_data_samples(data)
     return (data, labels)
+
+def crop_data_samples(data_samples):
+    cropped_samples = []
+    for sample in data_samples:
+        cropped_sample = sample
+        cropped_samples.append(cropped_sample)
+    return cropped_samples
 
 def augment_sample(sample):
     augmented_samples = []
@@ -83,7 +91,10 @@ def transform_emoji_points(points):
 
 def train_model(data, labels):
     print("⏲  Starting the training process")
-    data_train, data_test, labels_train, labels_test = train_test_split(data, labels, train_size=0.9, random_state=0)
+    flattened_data = []
+    for sample in data:
+        flattened_data.append(sample.flatten())
+    data_train, data_test, labels_train, labels_test = train_test_split(flattened_data, labels, train_size=0.9, random_state=0)
     print("🖖 Dataset divided into: ")
     print("     Data  train size: ", len(data_train))
     print("     Label train size: ", len(labels_train))
