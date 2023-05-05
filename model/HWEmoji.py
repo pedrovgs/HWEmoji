@@ -22,7 +22,7 @@ def prepare_data_set():
         raw_sample = read_file_content(sample_path);
         parsed_sample = json.loads(raw_sample);
         transformed_sample = transform_emoji_points(parsed_sample["points"])
-        print(f'    Sample ready. Initial points {np.count_nonzero(transformed_sample)}')
+        print(f'    Sample ready with {np.count_nonzero(transformed_sample)} points')
         if (sample_is_empty(transformed_sample)):
             print(f'☢️☢️☢️   Check sample in path {sample_path}. It is empty! ☢️☢️☢️')
             continue
@@ -42,15 +42,18 @@ def crop_data_samples(data_samples, label):
     for sample in data_samples:
         clean_sample = map_to_zero_or_one(sample)
         cropped_sample = crop_data_sample(clean_sample)
-        cropped_and_resized_sample = resize(cropped_sample, (100, 100), anti_aliasing = True)
-        print(f'Resize zeros before {np.count_nonzero(cropped_sample)} after {np.count_nonzero(cropped_and_resized_sample)}')
+        cropped_and_resized_sample = resize(cropped_sample, (100, 100), anti_aliasing = False)
         clean_final_sample = map_to_zero_or_one(cropped_and_resized_sample)
-        print(f'Resize after clean zeros before {np.count_nonzero(cropped_sample)} after {np.count_nonzero(clean_final_sample)}')
-        if (sample_is_not_empty(clean_final_sample)):
-            cropped_samples.append(clean_final_sample)
-            show_sample(clean_final_sample, 50)
-        else:
-            print('☢️☢️☢️ Cropping image failure. Process generated empty image for label {label}')
+        # We either ensure we can replicate map_to_zero and other matrix operations from TS or we will have to implement this 
+        # using a different approach
+        #print(f'Sample number of points = {np.count_nonzero(sample)}')
+        #print(f'Clean sample  of points = {np.count_nonzero(clean_sample)}')
+        #print(f'Croppednumber of points = {np.count_nonzero(cropped_sample)}')
+        #print(f'Croppedresize of points = {np.count_nonzero(cropped_and_resized_sample)}')
+        #print(f'Final clean # of points = {np.count_nonzero(clean_final_sample)}')
+        #show_sample(sample, 10)
+        #show_sample(clean_final_sample, 10)
+        cropped_samples.append(clean_final_sample)
     return cropped_samples
 
 def crop_data_sample(sample):
@@ -84,7 +87,7 @@ samples_shown = 0
 def show_sample(sample, samples_to_show = 1):
     global samples_shown
     if samples_shown < samples_to_show:
-        plt.imshow(sample)
+        plt.imshow(sample, cmap='gray')
         plt.show()
         samples_shown += 1
 
@@ -246,7 +249,7 @@ def show_some_data_examples(data, labels, number_of_samples):
     print("🔍 Showing some data examples")
     for index, (image, label) in enumerate(zip(data[0:number_of_samples], labels[0:number_of_samples])):
         print(f'    Preparing visual representation of {label} for sample number: {index}')
-        plt.imshow(image)
+        plt.imshow(image, cmap='gray')
         plt.show()
 
 def main():
