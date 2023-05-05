@@ -9,7 +9,6 @@ import seaborn as sns
 from matplotlib.font_manager import FontProperties
 from scipy.ndimage import rotate
 import time
-import skimage
 from skimage.transform import AffineTransform
 from skimage.transform import resize
 
@@ -23,6 +22,7 @@ def prepare_data_set():
         raw_sample = read_file_content(sample_path);
         parsed_sample = json.loads(raw_sample);
         transformed_sample = transform_emoji_points(parsed_sample["points"])
+        print(f'    Sample ready. Initial points {np.count_nonzero(transformed_sample)}')
         if (sample_is_empty(transformed_sample)):
             print(f'☢️☢️☢️   Check sample in path {sample_path}. It is empty! ☢️☢️☢️')
             continue
@@ -40,9 +40,17 @@ def prepare_data_set():
 def crop_data_samples(data_samples, label):
     cropped_samples = []
     for sample in data_samples:
-        cropped_sample = crop_data_sample(sample)
-        cropped_and_resized_sample = resize(cropped_sample, (100, 100))
-        cropped_samples.append(cropped_and_resized_sample)
+        clean_sample = map_to_zero_or_one(sample)
+        cropped_sample = crop_data_sample(clean_sample)
+        cropped_and_resized_sample = resize(cropped_sample, (100, 100), anti_aliasing = True)
+        print(f'Resize zeros before {np.count_nonzero(cropped_sample)} after {np.count_nonzero(cropped_and_resized_sample)}')
+        clean_final_sample = map_to_zero_or_one(cropped_and_resized_sample)
+        print(f'Resize after clean zeros before {np.count_nonzero(cropped_sample)} after {np.count_nonzero(clean_final_sample)}')
+        if (sample_is_not_empty(clean_final_sample)):
+            cropped_samples.append(clean_final_sample)
+            show_sample(clean_final_sample, 50)
+        else:
+            print('☢️☢️☢️ Cropping image failure. Process generated empty image for label {label}')
     return cropped_samples
 
 def crop_data_sample(sample):
@@ -52,52 +60,25 @@ def crop_data_sample(sample):
         c = sample.any(0)
         out = sample[r.argmax():m-r[::-1].argmax(), c.argmax():n-c[::-1].argmax()]
     else:
-        out = np.empty((0,0),dtype=bool)
-    return out
+        out = np.empty((0,0),dtype=int)
+    return  out
 
-# Only needed for some specific ocations
-normalized_value = lambda x: 1 if x > 0.05 else 0
-map_to_zero_or_one =  np.vectorize(normalized_value)
+def normalized_value (x):
+    if x >= 0.01:
+        return 1
+    else:
+        return 0
+map_to_zero_or_one =  np.vectorize(normalized_value, otypes = [float])
 
 def augment_sample(sample):
     augmented_samples = []
     sample_flipped_horizontally = np.fliplr(sample)
     augmented_samples.append(sample_flipped_horizontally)
-    sample_size = 400
-    shift_values = [0.1, 0.08, 0.06, 0.04, 0.02]
-    for shift in shift_values:
-        right_shift_sample = np.roll(sample, int(sample_size * shift))
-        augmented_samples.append(right_shift_sample)
-        left_shift_sample = np.roll(sample, int(sample_size * shift * -1))
-        augmented_samples.append(left_shift_sample)
-        up_shift_sample = np.roll(sample, int(sample_size * shift * -1), axis=0)
-        augmented_samples.append(up_shift_sample)
-        down_shift_sample = np.roll(sample, int(sample_size * shift), axis=0)
-        augmented_samples.append(down_shift_sample)
-        down_and_right_shift_sample = np.roll(down_shift_sample, int(sample_size * shift))
-        augmented_samples.append(down_and_right_shift_sample)
-        down_and_left_shift_sample = np.roll(down_shift_sample, int(sample_size * shift * -1))
-        augmented_samples.append(down_and_left_shift_sample)
-        up_and_right_shift_sample = np.roll(up_shift_sample, int(sample_size * shift))
-        augmented_samples.append(up_and_right_shift_sample)
-        up_and_left_shift_sample = np.roll(up_shift_sample, int(sample_size * shift * -1))
-        augmented_samples.append(up_and_left_shift_sample)
     rotate_values = [5, 10, 15, 20, 25, 30, 35, 40, 45]
     for rotation_angle in rotate_values:
-        # This augmentation one generates values that are not 0s or 1s, that's why we have to
-        # normalize the values to 0 or 1
         rotated_sample = rotate(sample, angle=rotation_angle, reshape=False)
         augmented_samples.append(rotated_sample)
-    # It is likely if we crop images we won't need this one, so we will remove it soon 
-    # and we expect to maintain or even get the same result.
-    scale_values = [0.95, 0.9, 0.85, 0.8, 0.75, 0.7]
-    for scale in scale_values:
-        # This augmentation one generates values that are not 0s or 1s, that's why we have to
-        # normalize the values to 0 or 1
-        scale_transform = AffineTransform(scale = scale)
-        rescaled_sample = skimage.transform.warp(sample, scale_transform.inverse)
-        augmented_samples.append(rescaled_sample)
-    return filter(sample_is_not_empty, augmented_samples)
+    return augmented_samples
 
 samples_shown = 0
 def show_sample(sample, samples_to_show = 1):
@@ -111,7 +92,9 @@ def show_sample_if_contains_artifacts(sample):
     for x in sample:
         for y in x:
             if (y != 0.0 and y != 1.0):
+                print("☢️☢️☢️  ARTIFACT DETECTED")
                 show_sample(sample)
+                return
 
 def sample_is_empty(sample):
     return not sample_is_not_empty(sample)
