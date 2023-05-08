@@ -29,10 +29,13 @@ const initializeCanvas = (): HTMLCanvasElement => {
   const canvasTop = canvasBoundingRect.y;
   if (canvas !== null) {
     const ctx = canvas.getContext("2d");
-    canvas.addEventListener("mousemove", (event) => {
+    canvas.addEventListener("pointermove", (event) => {
       if (event.buttons == 1) {
-        const point = { x: event.x - canvasLeft, y: event.y - canvasTop };
-        points[points.length - 1].push(point);
+        const coalescedEvents = event.getCoalescedEvents();
+        coalescedEvents.forEach((coalescedEvent) => {
+          const coalescedPoint = { x: coalescedEvent.x - canvasLeft, y: coalescedEvent.y - canvasTop };
+          points[points.length - 1].push(coalescedPoint);
+        });
         lastButton = 1;
         modifiedSinceLastDraw = true;
       } else if (event.buttons == 0 && lastButton == 1) {

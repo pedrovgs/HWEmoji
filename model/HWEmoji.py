@@ -159,7 +159,7 @@ def train_model(data, labels):
     flattened_data = []
     for sample in data:
         flattened_data.append(sample.flatten())
-    data_train, data_test, labels_train, labels_test = train_test_split(flattened_data, labels, train_size=0.9, random_state=0)
+    data_train, data_test, labels_train, labels_test = train_test_split(flattened_data, labels, train_size=0.8, random_state=0)
     print("🖖 Dataset divided into: ")
     print("     Data  train size: ", len(data_train))
     print("     Label train size: ", len(labels_train))
@@ -220,6 +220,11 @@ def generate_probability_text_report(experiment_name, model, labels_test, test_p
     predictions_above_70_percent = 0
     predictions_above_60_percent = 0
     predictions_above_50_percent = 0
+    correct_predictions_above_90_percent = 0
+    correct_predictions_above_80_percent = 0
+    correct_predictions_above_70_percent = 0
+    correct_predictions_above_60_percent = 0
+    correct_predictions_above_50_percent = 0
     correct_perdictions_per_label = dict.fromkeys(all_labels, 0)
     predictions_per_label = dict.fromkeys(all_labels, 0)
     for index in range(test_data_set_size):
@@ -239,23 +244,38 @@ def generate_probability_text_report(experiment_name, model, labels_test, test_p
             correct_perdictions_per_label[best_prediction_label] += 1
         if (best_prediction_result >= 0.9):
             predictions_above_90_percent += 1
+            if (prediction_correct):
+                correct_predictions_above_90_percent += 1
         if (best_prediction_result >= 0.8):
             predictions_above_80_percent += 1
+            if (prediction_correct):
+                correct_predictions_above_80_percent += 1
         if (best_prediction_result >= 0.7):
             predictions_above_70_percent += 1
+            if (prediction_correct):
+                correct_predictions_above_70_percent += 1
         if (best_prediction_result >= 0.6):
             predictions_above_60_percent += 1
+            if (prediction_correct):
+                correct_predictions_above_60_percent += 1
         if (best_prediction_result >= 0.5):
             predictions_above_50_percent += 1
+            if (prediction_correct):
+                correct_predictions_above_50_percent += 1
         header = "✅" if prediction_correct else "❌"
         individual_report = f'{header} => Expected: {labels_test[index]} - Got: {best_prediction_label}. Probability = {best_prediction_result} \n'
         report_file.write(individual_report)
     report_file.write("\n------------- Prediction probability -------------\n")
     report_file.write(f'Predictions above 90% = {predictions_above_90_percent} - {(predictions_above_90_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Correct pre above 90% = {correct_predictions_above_90_percent} - {(correct_predictions_above_90_percent / test_data_set_size) * 100}%\n')
     report_file.write(f'Predictions above 80% = {predictions_above_80_percent} - {(predictions_above_80_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Correct pre above 80% = {correct_predictions_above_80_percent} - {(correct_predictions_above_80_percent / test_data_set_size) * 100}%\n')
     report_file.write(f'Predictions above 70% = {predictions_above_70_percent} - {(predictions_above_70_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Correct pre above 70% = {correct_predictions_above_70_percent} - {(correct_predictions_above_70_percent / test_data_set_size) * 100}%\n')
     report_file.write(f'Predictions above 60% = {predictions_above_60_percent} - {(predictions_above_60_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Correct pre above 60% = {correct_predictions_above_60_percent} - {(correct_predictions_above_60_percent / test_data_set_size) * 100}%\n')
     report_file.write(f'Predictions above 50% = {predictions_above_50_percent} - {(predictions_above_50_percent / test_data_set_size) * 100}%\n')
+    report_file.write(f'Correct pre above 50% = {correct_predictions_above_50_percent} - {(correct_predictions_above_50_percent / test_data_set_size) * 100}%\n')
     report_file.write("\n------------- Prediction per label -------------\n")
     for label in all_labels:
         if (predictions_per_label[label] == 0):
