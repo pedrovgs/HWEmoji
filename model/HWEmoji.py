@@ -1,71 +1,128 @@
 import os
 import json
 import numpy as np
-import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 import matplotlib.pyplot as plt
 from sklearn import metrics
 import seaborn as sns
 from matplotlib.font_manager import FontProperties
-from scipy.ndimage import rotate
 import time
-import skimage
 from skimage.transform import AffineTransform
+from skimage.transform import resize
 
 def prepare_data_set():
     dataset_folder = "../dataset/"
     samples = os.listdir(dataset_folder)
     data = []
     labels = []
+    sample_number = 0
     for sample in samples:
         sample_path = dataset_folder + sample;
         raw_sample = read_file_content(sample_path);
         parsed_sample = json.loads(raw_sample);
-        transformed_sample = transform_emoji_points(parsed_sample["points"])
+        raw_points = parsed_sample["points"]
+        transformed_sample = transform_emoji_points(raw_points)
         label = parsed_sample["emoji"]
-        data.append(transformed_sample.flatten())
+        data.append(transformed_sample)
         labels.append(label)
         # We improve our data set by generating more samples based on the original but with some modifications
-        augmentations = augment_sample(transformed_sample)
-        for augmentation in augmentations:
-            data.append(augmentation.flatten())
+        # using the original data on R2 in order to guarantee the output generated contains a similar number of points 
+        # however, some augmentations are easier to implement if we use the transformed version, like horizontal flips
+        transformed_augmentations = augment_transformed_sample(transformed_sample)
+        for transformed_augmentation in transformed_augmentations:
+            data.append(transformed_augmentation)
             labels.append(label)
+        raw_augmentations = augment_raw_sample(raw_points)
+        for augmentation in raw_augmentations:
+            transformed_raw_augmentation = transform_emoji_points(augmentation)
+            data.append(transformed_raw_augmentation)
+            labels.append(label)
+        sample_number += 1
+    print("    Samples and augmented samples ready, let's transform them into features")
+    data = crop_data_samples(data, label)
     return (data, labels)
 
-def augment_sample(sample):
+def crop_data_samples(data_samples, label):
+    cropped_samples = []
+    for sample in data_samples:
+        clean_sample = map_to_zero_or_one(sample)
+        cropped_sample = crop_data_sample(clean_sample)
+        cropped_and_resized_sample = resize(cropped_sample, (100, 100), anti_aliasing = False)
+        clean_final_sample = map_to_zero_or_one(cropped_and_resized_sample)
+        # We either ensure we can replicate map_to_zero and other matrix operations from TS or we will have to implement this 
+        # using a different approach
+        #print(f'Sample number of points = {np.count_nonzero(sample)}')
+        #print(f'Clean sample  of points = {np.count_nonzero(clean_sample)}')
+        #print(f'Croppedresize of points = {np.count_nonzero(cropped_and_resized_sample)}')
+        #print(f'Final clean # of points = {np.count_nonzero(clean_final_sample)}')
+        #show_sample(clean_final_sample, 20)
+        cropped_samples.append(clean_final_sample)
+    return cropped_samples
+
+def crop_data_sample(sample):
+    r = sample.any(1)
+    if r.any():
+        m,n = sample.shape
+        c = sample.any(0)
+        out = sample[r.argmax():m-r[::-1].argmax(), c.argmax():n-c[::-1].argmax()]
+    else:
+        out = np.empty((0,0),dtype=int)
+    return  out
+
+def normalized_value (x):
+    if x >= 0.01:
+        return 1
+    else:
+        return 0
+map_to_zero_or_one =  np.vectorize(normalized_value, otypes = [float])
+
+def augment_raw_sample(raw_sample):
+    augmented_samples = []
+    rotate_values = [-5, -10, -15, -20, -25, -30, -35, -40, -45, 5, 10, 15, 20, 25, 30, 35, 40, 45]
+    for rotation_angle in rotate_values:
+        rotated_sample = [];
+        for points in raw_sample:
+            new_x, new_y = rotate_point_around_center(points["x"], points["y"], rotation_angle)
+            rotated_sample.append({ "x": new_x, "y": new_y })
+        augmented_samples.append(rotated_sample)
+    return augmented_samples
+
+def rotate_point_around_center(x, y, degrees):
+    angle = np.radians(degrees)
+    point_to_be_rotated = (x, y)    
+    center_point = (200, 200)
+    xnew = np.cos(angle)*(point_to_be_rotated[0] - center_point[0]) - np.sin(angle)*(point_to_be_rotated[1] - center_point[1]) + center_point[0]
+    ynew = np.sin(angle)*(point_to_be_rotated[0] - center_point[0]) + np.cos(angle)*(point_to_be_rotated[1] - center_point[1]) + center_point[1]
+    return (round(xnew,2),round(ynew,2))
+
+def augment_transformed_sample(sample):
     augmented_samples = []
     sample_flipped_horizontally = np.fliplr(sample)
     augmented_samples.append(sample_flipped_horizontally)
-    sample_size = 400
-    shift_values = [0.1, 0.08, 0.06, 0.04, 0.02]
-    for shift in shift_values:
-        right_shift_sample = np.roll(sample, int(sample_size * shift))
-        augmented_samples.append(right_shift_sample)
-        left_shift_sample = np.roll(sample, int(sample_size * shift * -1))
-        augmented_samples.append(left_shift_sample)
-        up_shift_sample = np.roll(sample, int(sample_size * shift * -1), axis=0)
-        augmented_samples.append(up_shift_sample)
-        down_shift_sample = np.roll(sample, int(sample_size * shift), axis=0)
-        augmented_samples.append(down_shift_sample)
-        down_and_right_shift_sample = np.roll(down_shift_sample, int(sample_size * shift))
-        augmented_samples.append(down_and_right_shift_sample)
-        down_and_left_shift_sample = np.roll(down_shift_sample, int(sample_size * shift * -1))
-        augmented_samples.append(down_and_left_shift_sample)
-        up_and_right_shift_sample = np.roll(up_shift_sample, int(sample_size * shift))
-        augmented_samples.append(up_and_right_shift_sample)
-        up_and_left_shift_sample = np.roll(up_shift_sample, int(sample_size * shift * -1))
-        augmented_samples.append(up_and_left_shift_sample)
-    rotate_values = [5, 10, 15, 20, 25, 30, 35, 40, 45]
-    for rotation_angle in rotate_values:
-        rotated_sample = rotate(sample, angle=rotation_angle, reshape=False)
-        augmented_samples.append(rotated_sample)
-    scale_values = [0.95, 0.9, 0.85, 0.8, 0.75, 0.7]
-    for scale in scale_values:
-        scale_transform = AffineTransform(scale = scale)
-        rescaled_sample = skimage.transform.warp(sample, scale_transform.inverse)
-        augmented_samples.append(rescaled_sample)
     return augmented_samples
+
+samples_shown = 0
+def show_sample(sample, samples_to_show = 1):
+    global samples_shown
+    if samples_shown < samples_to_show:
+        plt.imshow(sample, cmap='gray')
+        plt.show()
+        samples_shown += 1
+
+def show_sample_if_contains_artifacts(sample):
+    for x in sample:
+        for y in x:
+            if (y != 0.0 and y != 1.0):
+                print("☢️☢️☢️  ARTIFACT DETECTED")
+                show_sample(sample)
+                return
+
+def sample_is_empty(sample):
+    return not sample_is_not_empty(sample)
+
+def sample_is_not_empty(sample):
+    return np.count_nonzero(sample) > 0
 
 def read_file_content(path):
     file = open(path, "r")
@@ -74,16 +131,22 @@ def read_file_content(path):
     return content;
 
 def transform_emoji_points(points):
-    black_and_white_points = np.zeros((400, 400));
+    input_size = 400
+    black_and_white_points = np.zeros((input_size, input_size));
     for point in points:
         x = int(point["x"])
         y = int(point["y"])
-        black_and_white_points[y][x] = 1;
+        point_inside_the_matrix = x < input_size and y < input_size and x >= 0 and y >= 0
+        if (point_inside_the_matrix):
+            black_and_white_points[y][x] = 1;
     return black_and_white_points;
 
 def train_model(data, labels):
     print("⏲  Starting the training process")
-    data_train, data_test, labels_train, labels_test = train_test_split(data, labels, train_size=0.9, random_state=0)
+    flattened_data = []
+    for sample in data:
+        flattened_data.append(sample.flatten())
+    data_train, data_test, labels_train, labels_test = train_test_split(flattened_data, labels, train_size=0.9, random_state=0)
     print("🖖 Dataset divided into: ")
     print("     Data  train size: ", len(data_train))
     print("     Label train size: ", len(labels_train))
@@ -176,10 +239,14 @@ def generate_probability_text_report(model, labels_test, test_probability_predic
     report_file.write(f'Predictions above 50% = {predictions_above_50_percent} - {(predictions_above_50_percent / test_data_set_size) * 100}%\n')
     report_file.write("\n------------- Prediction per label -------------\n")
     for label in all_labels:
-        report_file.write(f'Correct predictions for {label} = {(correct_perdictions_per_label[label] / predictions_per_label[label]) * 100}%. Correct = {correct_perdictions_per_label[label]}. Total = {predictions_per_label[label]}\n')
+        if (predictions_per_label[label] == 0):
+            print(f'☢️☢️☢️  Label {label} has 0 predictions ☢️☢️☢️')
+        else:
+            report_file.write(f'Correct predictions for {label} = {(correct_perdictions_per_label[label] / predictions_per_label[label]) * 100}%. Correct = {correct_perdictions_per_label[label]}. Total = {predictions_per_label[label]}\n')
     correct_preciction_percentage = dict.fromkeys(all_labels, "")
     for label in all_labels:
-        correct_preciction_percentage[label] = f'{correct_perdictions_per_label[label] / predictions_per_label[label] * 100}%'
+        if (predictions_per_label[label] != 0):
+            correct_preciction_percentage[label] = f'{correct_perdictions_per_label[label] / predictions_per_label[label] * 100}%'
     print(f'    Acc per label:{correct_perdictions_per_label}' )
     print(f'    Predictions per label:{predictions_per_label}' )
     print(f'    Acc % per label:{correct_preciction_percentage}' )
@@ -204,14 +271,14 @@ def show_some_data_examples(data, labels, number_of_samples):
     print("🔍 Showing some data examples")
     for index, (image, label) in enumerate(zip(data[0:number_of_samples], labels[0:number_of_samples])):
         print(f'    Preparing visual representation of {label} for sample number: {index}')
-        reshaped_image = np.reshape(image, (400,400))
-        plt.imshow(reshaped_image)
+        plt.imshow(image, cmap='gray')
         plt.show()
 
 def main():
     print("😃 Initializing HWEmoji training script")
     print("🤓 Preparing trainig data using the files from /dataset")
     data, labels = prepare_data_set()
+    print(f'📖 Data set ready with {len(data)} samples asociated to {len(labels)} labels')
     #show_some_data_examples(data, labels, 10)
     model, data_train, data_test, labels_train, labels_test = train_model(data, labels)
     print(f'💪 Model trained with {len(data_train)} samples. Evaluating model accuracy')
