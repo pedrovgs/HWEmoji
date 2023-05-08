@@ -322,10 +322,15 @@
 
 ------------- Prediction probability -------------
 Predictions above 90% = 83 - 25.937500000000004%
+Correct pre above 90% = 81 - 25.3125%
 Predictions above 80% = 138 - 43.125%
+Correct pre above 80% = 134 - 41.875%
 Predictions above 70% = 170 - 53.125%
+Correct pre above 70% = 163 - 50.9375%
 Predictions above 60% = 213 - 66.5625%
+Correct pre above 60% = 200 - 62.5%
 Predictions above 50% = 250 - 78.125%
+Correct pre above 50% = 225 - 70.3125%
 
 ------------- Prediction per label -------------
 Correct predictions for 1️⃣ = 74.07407407407408%. Correct = 20. Total = 27
