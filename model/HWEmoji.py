@@ -159,7 +159,7 @@ def train_model(data, labels):
     flattened_data = []
     for sample in data:
         flattened_data.append(sample.flatten())
-    data_train, data_test, labels_train, labels_test = train_test_split(flattened_data, labels, train_size=0.9, random_state=0)
+    data_train, data_test, labels_train, labels_test = train_test_split(flattened_data, labels, train_size=0.8, random_state=0)
     print("🖖 Dataset divided into: ")
     print("     Data  train size: ", len(data_train))
     print("     Label train size: ", len(labels_train))
