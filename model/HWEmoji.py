@@ -17,6 +17,10 @@ def prepare_data_set():
     data = []
     labels = []
     sample_number = 0
+    original_samples = []
+    augmented_samples = []
+    original_labels = []
+    augmented_labels = []
     for sample in samples:
         sample_path = dataset_folder + sample;
         raw_sample = read_file_content(sample_path);
@@ -26,6 +30,8 @@ def prepare_data_set():
         label = parsed_sample["emoji"]
         data.append(transformed_sample)
         labels.append(label)
+        original_samples.append(transformed_sample)
+        original_labels.append(label)
         # We improve our data set by generating more samples based on the original but with some modifications
         # using the original data on R2 in order to guarantee the output generated contains a similar number of points 
         # however, some augmentations are easier to implement if we use the transformed version, like horizontal flips
@@ -33,15 +39,22 @@ def prepare_data_set():
         for transformed_augmentation in transformed_augmentations:
             data.append(transformed_augmentation)
             labels.append(label)
+            augmented_samples.append(transformed_augmentation)
+            augmented_labels.append(label)
         raw_augmentations = augment_raw_sample(raw_points)
         for augmentation in raw_augmentations:
             transformed_raw_augmentation = transform_emoji_points(augmentation)
             data.append(transformed_raw_augmentation)
             labels.append(label)
+            augmented_samples.append(transformed_raw_augmentation)
+            augmented_labels.append(label)
         sample_number += 1
     print("    Samples and augmented samples ready, let's transform them into features")
+    print("    Number of  original samples = " + str(len(original_samples)))
+    print("    Number of augmented samples = " + str(len(augmented_samples)))
+    print("    Total  number  of   samples = " + str(len(data)))
     data = crop_data_samples(data, label)
-    return (data, labels)
+    return (data, labels, original_samples, original_labels, augmented_samples, augmented_labels)
 
 def crop_data_samples(data_samples, label):
     cropped_samples = []
@@ -154,12 +167,7 @@ def train_model(data, labels):
     print("     Label  test size: ", len(labels_test))
     # solver = "saga", max_iter = 50 got the best results in terms of accuracy,
     # but training the model takes forever.
-    logistic_regression = LogisticRegression(n_jobs = os.cpu_count(), verbose = True)
-    print("⌛️ Training the model")
-    start_time = time.time()
-    logistic_regression.fit(data_train, labels_train)
-    end_time = time.time()
-    print(f'✅ Model training completed. Training time {end_time - start_time} seconds')
+    logistic_regression = initialize_and_fit_logistic_regression_model(data_train, labels_train)
     test_element = data_test[0].reshape(1,-1)
     expected_label_for_test_element = labels_test[0]
     # Here we can find all the model classes logistic_regression.classes_
@@ -168,20 +176,31 @@ def train_model(data, labels):
     print(f'    Model tested after trainign expecting {expected_label_for_test_element} and got {test_prediction}')
     return (logistic_regression, data_train, data_test, labels_train, labels_test)
 
-def evaluate_model_accuracy(model, data_train, data_test, labels_train, labels_test):
+def initialize_and_fit_logistic_regression_model(data_train, labels_train):
+    logistic_regression = LogisticRegression(n_jobs = os.cpu_count(), verbose = True)
+    print("⌛️ Training the model")
+    start_time = time.time()
+    logistic_regression.fit(data_train, labels_train)
+    end_time = time.time()
+    print(f'✅ Model training completed. Training time {end_time - start_time} seconds')
+    return logistic_regression
+
+def evaluate_model_accuracy(experiment_name, model, data_train, data_test, labels_train, labels_test):
     print("📏 Evaluating model accuracy using the test and train data")
+    print(f'    Train data size = {len(data_train)}. Train data labels = {len(labels_train)}')
+    print(f'    Test data size = {len(data_test)}. Train data labels = {len(labels_test)}')
     train_score = model.score(data_train, labels_train)
     test_score = model.score(data_test, labels_test)
     test_predictions = model.predict(data_test)
     print(f'    Test  score = {test_score}')
     print(f'    Train score = {train_score}')
-    generate_confusion_matrix(model, labels_test, test_score, test_predictions)
-    generate_classification_text_report(labels_test, test_predictions)
+    generate_confusion_matrix(experiment_name, model, labels_test, test_score, test_predictions)
+    generate_classification_text_report(experiment_name, labels_test, test_predictions)
     test_probablity_predictions = model.predict_proba(data_test)
-    generate_probability_text_report(model, labels_test, test_probablity_predictions)
+    generate_probability_text_report(experiment_name, model, labels_test, test_probablity_predictions)
 
-def generate_classification_text_report(labels_test, test_predictions):
-    report_file = open("./metrics/test_prediction_report.txt", "w")
+def generate_classification_text_report(experiment_name, labels_test, test_predictions):
+    report_file = open(f'./metrics/test_prediction_report_{experiment_name}.txt', "w")
     test_data_set_size = len(test_predictions) 
     report_file.write(f'📊 Test prediction report for {test_data_set_size} elements\n')
     for index in range(test_data_set_size):
@@ -190,10 +209,10 @@ def generate_classification_text_report(labels_test, test_predictions):
         report_file.write(individual_report)
     report_file.close()
 
-def generate_probability_text_report(model, labels_test, test_probability_predictions):
-    print("📏 Evaluating model accuracy based on classification probability")
+def generate_probability_text_report(experiment_name, model, labels_test, test_probability_predictions):
+    print(f"📏 Evaluating model accuracy based on classification probability")
     all_labels = model.classes_
-    report_file = open("./metrics/test_probability_prediction_report.txt", "w")
+    report_file = open(f'./metrics/test_probability_prediction_report_{experiment_name}.txt', "w")
     test_data_set_size = len(test_probability_predictions) 
     report_file.write(f'📊 Test probability prediction report for {test_data_set_size} elements\n')
     predictions_above_90_percent = 0
@@ -247,12 +266,12 @@ def generate_probability_text_report(model, labels_test, test_probability_predic
     for label in all_labels:
         if (predictions_per_label[label] != 0):
             correct_preciction_percentage[label] = f'{correct_perdictions_per_label[label] / predictions_per_label[label] * 100}%'
-    print(f'    Acc per label:{correct_perdictions_per_label}' )
-    print(f'    Predictions per label:{predictions_per_label}' )
-    print(f'    Acc % per label:{correct_preciction_percentage}' )
+    print(f'    Success predictions per label:{correct_perdictions_per_label}' )
+    print(f'    Total   predictions per label:{predictions_per_label}' )
+    print(f'    Acc % per label :{correct_preciction_percentage}' )
     report_file.close()
 
-def generate_confusion_matrix(model, labels_test, test_score, test_predictions):
+def generate_confusion_matrix(experiment_name, model, labels_test, test_score, test_predictions):
     confusion_matrix = metrics.confusion_matrix(labels_test, test_predictions)
     plt.figure(figsize=(9,9))
     sns.heatmap(confusion_matrix, annot=True, fmt=".3f", linewidths=.5, square = True, cmap = 'Blues_r');
@@ -260,7 +279,7 @@ def generate_confusion_matrix(model, labels_test, test_score, test_predictions):
     plt.xlabel('Predicted label');
     all_sample_title = 'Accuracy Score: {0}'.format(test_score)
     plt.title(all_sample_title, size = 15);
-    plt.savefig("./metrics/confusion_matrix.png")
+    plt.savefig(f'./metrics/confusion_matrix_{experiment_name}.png')
     print(f'    Confusion matrix index-emoji legend:')
     index = 0
     for label in model.classes_:
@@ -277,15 +296,29 @@ def show_some_data_examples(data, labels, number_of_samples):
 def main():
     print("😃 Initializing HWEmoji training script")
     print("🤓 Preparing trainig data using the files from /dataset")
-    data, labels = prepare_data_set()
+    data, labels, original_samples, original_labels, augmented_samlpes, augmented_labels = prepare_data_set()
     print(f'📖 Data set ready with {len(data)} samples asociated to {len(labels)} labels')
     #show_some_data_examples(data, labels, 10)
+    train_and_evaluate_accuracy_with_all_the_data(data, labels)
+    train_and_evaluate_accuracy_with_augmented_samples_only(original_samples, original_labels, augmented_samlpes, augmented_labels)
+    print("✅ Training completed")
+
+def train_and_evaluate_accuracy_with_all_the_data(data, labels):
     model, data_train, data_test, labels_train, labels_test = train_model(data, labels)
     print(f'💪 Model trained with {len(data_train)} samples. Evaluating model accuracy')
-    evaluate_model_accuracy(model, data_train, data_test, labels_train, labels_test)
-    print("✅ Model updated and saved")
+    evaluate_model_accuracy("full_data_set", model, data_train, data_test, labels_train, labels_test)
 
-
+def train_and_evaluate_accuracy_with_augmented_samples_only(original_samples, original_labels, augmented_samples, augmented_labels):
+    print("⏲  Starting the training process with augmented samples only")
+    flattened_augmented_data = []
+    for augmented_sample in augmented_samples:
+        flattened_augmented_data.append(augmented_sample.flatten())
+    flattened_original_data = []
+    for original_sample in original_samples:
+        flattened_original_data.append(original_sample.flatten())
+    model = initialize_and_fit_logistic_regression_model(flattened_augmented_data, augmented_labels)
+    print(f'💪 Model trained with {len(augmented_samples)} augmented samples. Evaluating model accuracy')
+    evaluate_model_accuracy("augmented_samples_training", model, flattened_augmented_data, flattened_original_data, augmented_labels, original_labels)
 
 if __name__ == "__main__":
     main()
