@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 from sklearn import metrics
 import seaborn as sns
 from matplotlib.font_manager import FontProperties
-from scipy.ndimage import rotate
 import time
 from skimage.transform import AffineTransform
 from skimage.transform import resize
@@ -17,24 +16,31 @@ def prepare_data_set():
     samples = os.listdir(dataset_folder)
     data = []
     labels = []
+    sample_number = 0
     for sample in samples:
         sample_path = dataset_folder + sample;
         raw_sample = read_file_content(sample_path);
         parsed_sample = json.loads(raw_sample);
-        transformed_sample = transform_emoji_points(parsed_sample["points"])
-        print(f'    Sample ready with {np.count_nonzero(transformed_sample)} points')
-        if (sample_is_empty(transformed_sample)):
-            print(f'☢️☢️☢️   Check sample in path {sample_path}. It is empty! ☢️☢️☢️')
-            continue
+        raw_points = parsed_sample["points"]
+        transformed_sample = transform_emoji_points(raw_points)
         label = parsed_sample["emoji"]
         data.append(transformed_sample)
         labels.append(label)
         # We improve our data set by generating more samples based on the original but with some modifications
-        augmentations = augment_sample(transformed_sample)
-        for augmentation in augmentations:
-            data.append(augmentation)
+        # using the original data on R2 in order to guarantee the output generated contains a similar number of points 
+        # however, some augmentations are easier to implement if we use the transformed version, like horizontal flips
+        transformed_augmentations = augment_transformed_sample(transformed_sample)
+        for transformed_augmentation in transformed_augmentations:
+            data.append(transformed_augmentation)
             labels.append(label)
-        data = crop_data_samples(data, label)
+        raw_augmentations = augment_raw_sample(raw_points)
+        for augmentation in raw_augmentations:
+            transformed_raw_augmentation = transform_emoji_points(augmentation)
+            data.append(transformed_raw_augmentation)
+            labels.append(label)
+        sample_number += 1
+    print("    Samples and augmented samples ready, let's transform them into features")
+    data = crop_data_samples(data, label)
     return (data, labels)
 
 def crop_data_samples(data_samples, label):
@@ -48,11 +54,9 @@ def crop_data_samples(data_samples, label):
         # using a different approach
         #print(f'Sample number of points = {np.count_nonzero(sample)}')
         #print(f'Clean sample  of points = {np.count_nonzero(clean_sample)}')
-        #print(f'Croppednumber of points = {np.count_nonzero(cropped_sample)}')
         #print(f'Croppedresize of points = {np.count_nonzero(cropped_and_resized_sample)}')
         #print(f'Final clean # of points = {np.count_nonzero(clean_final_sample)}')
-        #show_sample(sample, 10)
-        #show_sample(clean_final_sample, 10)
+        #show_sample(clean_final_sample, 20)
         cropped_samples.append(clean_final_sample)
     return cropped_samples
 
@@ -73,14 +77,29 @@ def normalized_value (x):
         return 0
 map_to_zero_or_one =  np.vectorize(normalized_value, otypes = [float])
 
-def augment_sample(sample):
+def augment_raw_sample(raw_sample):
+    augmented_samples = []
+    rotate_values = [-5, -10, -15, -20, -25, -30, -35, -40, -45, 5, 10, 15, 20, 25, 30, 35, 40, 45]
+    for rotation_angle in rotate_values:
+        rotated_sample = [];
+        for points in raw_sample:
+            new_x, new_y = rotate_point_around_center(points["x"], points["y"], rotation_angle)
+            rotated_sample.append({ "x": new_x, "y": new_y })
+        augmented_samples.append(rotated_sample)
+    return augmented_samples
+
+def rotate_point_around_center(x, y, degrees):
+    angle = np.radians(degrees)
+    point_to_be_rotated = (x, y)    
+    center_point = (200, 200)
+    xnew = np.cos(angle)*(point_to_be_rotated[0] - center_point[0]) - np.sin(angle)*(point_to_be_rotated[1] - center_point[1]) + center_point[0]
+    ynew = np.sin(angle)*(point_to_be_rotated[0] - center_point[0]) + np.cos(angle)*(point_to_be_rotated[1] - center_point[1]) + center_point[1]
+    return (round(xnew,2),round(ynew,2))
+
+def augment_transformed_sample(sample):
     augmented_samples = []
     sample_flipped_horizontally = np.fliplr(sample)
     augmented_samples.append(sample_flipped_horizontally)
-    rotate_values = [5, 10, 15, 20, 25, 30, 35, 40, 45]
-    for rotation_angle in rotate_values:
-        rotated_sample = rotate(sample, angle=rotation_angle, reshape=False)
-        augmented_samples.append(rotated_sample)
     return augmented_samples
 
 samples_shown = 0
@@ -112,11 +131,14 @@ def read_file_content(path):
     return content;
 
 def transform_emoji_points(points):
-    black_and_white_points = np.zeros((400, 400));
+    input_size = 400
+    black_and_white_points = np.zeros((input_size, input_size));
     for point in points:
         x = int(point["x"])
         y = int(point["y"])
-        black_and_white_points[y][x] = 1;
+        point_inside_the_matrix = x < input_size and y < input_size and x >= 0 and y >= 0
+        if (point_inside_the_matrix):
+            black_and_white_points[y][x] = 1;
     return black_and_white_points;
 
 def train_model(data, labels):
@@ -256,6 +278,7 @@ def main():
     print("😃 Initializing HWEmoji training script")
     print("🤓 Preparing trainig data using the files from /dataset")
     data, labels = prepare_data_set()
+    print(f'📖 Data set ready with {len(data)} samples asociated to {len(labels)} labels')
     #show_some_data_examples(data, labels, 10)
     model, data_train, data_test, labels_train, labels_test = train_model(data, labels)
     print(f'💪 Model trained with {len(data_train)} samples. Evaluating model accuracy')
