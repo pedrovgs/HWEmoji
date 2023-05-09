@@ -165,8 +165,6 @@ def train_model(data, labels):
     print("     Label train size: ", len(labels_train))
     print("     Data   test size: ", len(data_test))
     print("     Label  test size: ", len(labels_test))
-    # solver = "saga", max_iter = 50 got the best results in terms of accuracy,
-    # but training the model takes forever.
     logistic_regression = initialize_and_fit_logistic_regression_model(data_train, labels_train)
     test_element = data_test[0].reshape(1,-1)
     expected_label_for_test_element = labels_test[0]
@@ -227,6 +225,7 @@ def generate_probability_text_report(experiment_name, model, labels_test, test_p
     correct_predictions_above_50_percent = 0
     correct_perdictions_per_label = dict.fromkeys(all_labels, 0)
     predictions_per_label = dict.fromkeys(all_labels, 0)
+    number_of_occurences_per_label = dict.fromkeys(all_labels, 0)
     for index in range(test_data_set_size):
         prediction_result = test_probability_predictions[index]
         best_prediction_result = -1
@@ -238,8 +237,12 @@ def generate_probability_text_report(experiment_name, model, labels_test, test_p
             if label_probability > best_prediction_result:
                 best_prediction_result = prediction_result[label_index]
                 best_prediction_label = label
+        expected_label = labels_test[index]
+        # We save how many occurences per labels we have
+        number_of_occurences_per_label[expected_label] +=1
+        # We save how many times we predicted one label even if it's a failure
         predictions_per_label[best_prediction_label] += 1
-        prediction_correct = labels_test[index] == best_prediction_label
+        prediction_correct = expected_label == best_prediction_label
         if (prediction_correct):
             correct_perdictions_per_label[best_prediction_label] += 1
         if (best_prediction_result >= 0.9):
@@ -278,17 +281,17 @@ def generate_probability_text_report(experiment_name, model, labels_test, test_p
     report_file.write(f'Correct pre above 50% = {correct_predictions_above_50_percent} - {(correct_predictions_above_50_percent / test_data_set_size) * 100}%\n')
     report_file.write("\n------------- Prediction per label -------------\n")
     for label in all_labels:
-        if (predictions_per_label[label] == 0):
+        if (number_of_occurences_per_label[label] == 0):
             print(f'☢️☢️☢️  Label {label} has 0 predictions ☢️☢️☢️')
         else:
-            report_file.write(f'Correct predictions for {label} = {(correct_perdictions_per_label[label] / predictions_per_label[label]) * 100}%. Correct = {correct_perdictions_per_label[label]}. Total = {predictions_per_label[label]}\n')
-    correct_preciction_percentage = dict.fromkeys(all_labels, "")
+            report_file.write(f'Correct predictions for {label} = {(correct_perdictions_per_label[label] / number_of_occurences_per_label[label]) * 100}%. Correct = {correct_perdictions_per_label[label]}. Total = {number_of_occurences_per_label[label]}\n')
+    correct_prediction_percentage = dict.fromkeys(all_labels, "")
     for label in all_labels:
-        if (predictions_per_label[label] != 0):
-            correct_preciction_percentage[label] = f'{correct_perdictions_per_label[label] / predictions_per_label[label] * 100}%'
+        if (number_of_occurences_per_label[label] != 0):
+            correct_prediction_percentage[label] = f'{correct_perdictions_per_label[label] / number_of_occurences_per_label[label] * 100}%'
     print(f'    Success predictions per label:{correct_perdictions_per_label}' )
-    print(f'    Total   predictions per label:{predictions_per_label}' )
-    print(f'    Acc % per label :{correct_preciction_percentage}' )
+    print(f'    Total   predictions per label:{number_of_occurences_per_label}' )
+    print(f'    Acc % per label :{correct_prediction_percentage}' )
     report_file.close()
 
 def generate_confusion_matrix(experiment_name, model, labels_test, test_score, test_predictions):

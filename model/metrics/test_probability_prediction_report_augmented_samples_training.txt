@@ -1,84 +1,84 @@
 📊 Test probability prediction report for 80 elements
-✅ => Expected: 👀 - Got: 👀. Probability = 0.5441389175431116 
-✅ => Expected: 👀 - Got: 👀. Probability = 0.59520290942472 
-❌ => Expected: 1️⃣ - Got: ❗. Probability = 0.4202285167483751 
-❌ => Expected: 1️⃣ - Got: ❤️. Probability = 0.19625186310529652 
-✅ => Expected: ❗ - Got: ❗. Probability = 0.44605273766367226 
-❌ => Expected: ❤️ - Got: ❗. Probability = 0.22524141206700515 
-✅ => Expected: 😀 - Got: 😀. Probability = 0.5475133498316908 
-✅ => Expected: 🐶 - Got: 🐶. Probability = 0.2454045636982992 
-✅ => Expected: ✅ - Got: ✅. Probability = 0.45982487606572703 
-✅ => Expected: ❗ - Got: ❗. Probability = 0.7905206579504971 
-✅ => Expected: ❗ - Got: ❗. Probability = 0.31864779595154186 
-✅ => Expected: 🐶 - Got: 🐶. Probability = 0.7672150570246911 
-✅ => Expected: 🔗 - Got: 🔗. Probability = 0.21444195889487766 
-✅ => Expected: 🐶 - Got: 🐶. Probability = 0.5369840256100152 
-❌ => Expected: ❤️ - Got: ❗. Probability = 0.25173754912010937 
-❌ => Expected: 🔗 - Got: 1️⃣. Probability = 0.29474444502237435 
-✅ => Expected: ❤️ - Got: ❤️. Probability = 0.7141802622179412 
-✅ => Expected: 🔗 - Got: 🔗. Probability = 0.37131853105169654 
-✅ => Expected: ✅ - Got: ✅. Probability = 0.29856536097556957 
-✅ => Expected: 1️⃣ - Got: 1️⃣. Probability = 0.28619141346727994 
-❌ => Expected: 🐶 - Got: ✅. Probability = 0.22936083562887433 
-✅ => Expected: 🐶 - Got: 🐶. Probability = 0.4077139050402186 
-❌ => Expected: 👀 - Got: 1️⃣. Probability = 0.2710528717246595 
-❌ => Expected: ❗ - Got: ✅. Probability = 0.31977358640985704 
-✅ => Expected: ✅ - Got: ✅. Probability = 0.30032694697743445 
-✅ => Expected: 🐶 - Got: 🐶. Probability = 0.4169467391718911 
-✅ => Expected: 😀 - Got: 😀. Probability = 0.3851747219077204 
-✅ => Expected: ✅ - Got: ✅. Probability = 0.33425589423243673 
-❌ => Expected: 🔗 - Got: ✅. Probability = 0.44377575266187697 
-❌ => Expected: 1️⃣ - Got: ❗. Probability = 0.2648581860724752 
-❌ => Expected: 👀 - Got: 😀. Probability = 0.3522521754846893 
-✅ => Expected: 😀 - Got: 😀. Probability = 0.6205071207929924 
-✅ => Expected: ❤️ - Got: ❤️. Probability = 0.3141765372443607 
-✅ => Expected: ✅ - Got: ✅. Probability = 0.3174962759372316 
-✅ => Expected: 🔗 - Got: 🔗. Probability = 0.5677120391523681 
-✅ => Expected: 😀 - Got: 😀. Probability = 0.5163852221188868 
-❌ => Expected: ❤️ - Got: 1️⃣. Probability = 0.3894111888211632 
-❌ => Expected: 🐶 - Got: 🔗. Probability = 0.2950187591820752 
-✅ => Expected: 1️⃣ - Got: 1️⃣. Probability = 0.24783942330815242 
-✅ => Expected: 🔗 - Got: 🔗. Probability = 0.7290287360179283 
-✅ => Expected: 🐶 - Got: 🐶. Probability = 0.31801582767611836 
-✅ => Expected: ❤️ - Got: ❤️. Probability = 0.26176931659881614 
-✅ => Expected: 😀 - Got: 😀. Probability = 0.39738502064789666 
-❌ => Expected: ❤️ - Got: 1️⃣. Probability = 0.27580099467038083 
-✅ => Expected: ❗ - Got: ❗. Probability = 0.34692670227764044 
-✅ => Expected: 1️⃣ - Got: 1️⃣. Probability = 0.3876643993318009 
-❌ => Expected: ❤️ - Got: 😀. Probability = 0.4089354993065227 
-❌ => Expected: 1️⃣ - Got: ❗. Probability = 0.2812243693891434 
-✅ => Expected: ✅ - Got: ✅. Probability = 0.32673257898365227 
-✅ => Expected: ❗ - Got: ❗. Probability = 0.31926877956226013 
-✅ => Expected: ✅ - Got: ✅. Probability = 0.28914103042966866 
-✅ => Expected: 😀 - Got: 😀. Probability = 0.4055283429091888 
-✅ => Expected: ✅ - Got: ✅. Probability = 0.2645918719178905 
-✅ => Expected: 🔗 - Got: 🔗. Probability = 0.7773131106280551 
-❌ => Expected: ❗ - Got: 🐶. Probability = 0.43829275473105933 
-✅ => Expected: ❗ - Got: ❗. Probability = 0.3715480538018076 
-❌ => Expected: ✅ - Got: ❗. Probability = 0.2801979774400581 
-✅ => Expected: ❗ - Got: ❗. Probability = 0.4771905183572265 
-✅ => Expected: 👀 - Got: 👀. Probability = 0.9883641521985985 
-✅ => Expected: 🔗 - Got: 🔗. Probability = 0.6886967396265946 
-✅ => Expected: 1️⃣ - Got: 1️⃣. Probability = 0.23514766903622442 
-❌ => Expected: 👀 - Got: ❗. Probability = 0.3239353405229161 
-❌ => Expected: 👀 - Got: ❗. Probability = 0.275302588282685 
-✅ => Expected: 😀 - Got: 😀. Probability = 0.5481526145172401 
-❌ => Expected: 👀 - Got: 1️⃣. Probability = 0.31874640646255387 
-✅ => Expected: 🔗 - Got: 🔗. Probability = 0.2052691671625981 
-❌ => Expected: 1️⃣ - Got: ❗. Probability = 0.3554229716201143 
-✅ => Expected: 👀 - Got: 👀. Probability = 0.31515667002258757 
-✅ => Expected: 1️⃣ - Got: 1️⃣. Probability = 0.2595954381616945 
-❌ => Expected: ❤️ - Got: 1️⃣. Probability = 0.31098511708351917 
-✅ => Expected: 😀 - Got: 😀. Probability = 0.759312034120188 
-✅ => Expected: 🔗 - Got: 🔗. Probability = 0.22573666830137695 
-❌ => Expected: 🐶 - Got: 🔗. Probability = 0.3383471412080416 
-✅ => Expected: ✅ - Got: ✅. Probability = 0.5050198460639292 
-✅ => Expected: ❗ - Got: ❗. Probability = 0.5118174669784863 
-✅ => Expected: 👀 - Got: 👀. Probability = 0.2553739720187305 
-❌ => Expected: 😀 - Got: ✅. Probability = 0.2637556340647097 
-❌ => Expected: 😀 - Got: ❤️. Probability = 0.2705942895733654 
-✅ => Expected: 🐶 - Got: 🐶. Probability = 0.4210446064551624 
-✅ => Expected: ❤️ - Got: ❤️. Probability = 0.22884833360685722 
+✅ => Expected: 👀 - Got: 👀. Probability = 0.5441389175431133 
+✅ => Expected: 👀 - Got: 👀. Probability = 0.5952029094247238 
+❌ => Expected: 1️⃣ - Got: ❗. Probability = 0.4202285167483703 
+❌ => Expected: 1️⃣ - Got: ❤️. Probability = 0.19625186310529516 
+✅ => Expected: ❗ - Got: ❗. Probability = 0.4460527376636683 
+❌ => Expected: ❤️ - Got: ❗. Probability = 0.2252414120670017 
+✅ => Expected: 😀 - Got: 😀. Probability = 0.5475133498316938 
+✅ => Expected: 🐶 - Got: 🐶. Probability = 0.24540456369829433 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.4598248760657285 
+✅ => Expected: ❗ - Got: ❗. Probability = 0.7905206579504928 
+✅ => Expected: ❗ - Got: ❗. Probability = 0.31864779595153886 
+✅ => Expected: 🐶 - Got: 🐶. Probability = 0.767215057024688 
+✅ => Expected: 🔗 - Got: 🔗. Probability = 0.21444195889487802 
+✅ => Expected: 🐶 - Got: 🐶. Probability = 0.5369840256100116 
+❌ => Expected: ❤️ - Got: ❗. Probability = 0.25173754912010565 
+❌ => Expected: 🔗 - Got: 1️⃣. Probability = 0.294744445022374 
+✅ => Expected: ❤️ - Got: ❤️. Probability = 0.7141802622179414 
+✅ => Expected: 🔗 - Got: 🔗. Probability = 0.371318531051698 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.2985653609755698 
+✅ => Expected: 1️⃣ - Got: 1️⃣. Probability = 0.28619141346727867 
+❌ => Expected: 🐶 - Got: ✅. Probability = 0.22936083562887605 
+✅ => Expected: 🐶 - Got: 🐶. Probability = 0.4077139050402088 
+❌ => Expected: 👀 - Got: 1️⃣. Probability = 0.2710528717246577 
+❌ => Expected: ❗ - Got: ✅. Probability = 0.3197735864098598 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.3003269469774366 
+✅ => Expected: 🐶 - Got: 🐶. Probability = 0.4169467391718868 
+✅ => Expected: 😀 - Got: 😀. Probability = 0.3851747219077239 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.33425589423243934 
+❌ => Expected: 🔗 - Got: ✅. Probability = 0.44377575266187863 
+❌ => Expected: 1️⃣ - Got: ❗. Probability = 0.26485818607247286 
+❌ => Expected: 👀 - Got: 😀. Probability = 0.3522521754846917 
+✅ => Expected: 😀 - Got: 😀. Probability = 0.6205071207929966 
+✅ => Expected: ❤️ - Got: ❤️. Probability = 0.3141765372443612 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.31749627593723195 
+✅ => Expected: 🔗 - Got: 🔗. Probability = 0.5677120391523695 
+✅ => Expected: 😀 - Got: 😀. Probability = 0.5163852221188914 
+❌ => Expected: ❤️ - Got: 1️⃣. Probability = 0.38941118882116127 
+❌ => Expected: 🐶 - Got: 🔗. Probability = 0.2950187591820746 
+✅ => Expected: 1️⃣ - Got: 1️⃣. Probability = 0.24783942330815323 
+✅ => Expected: 🔗 - Got: 🔗. Probability = 0.7290287360179296 
+✅ => Expected: 🐶 - Got: 🐶. Probability = 0.3180158276761153 
+✅ => Expected: ❤️ - Got: ❤️. Probability = 0.26176931659881597 
+✅ => Expected: 😀 - Got: 😀. Probability = 0.3973850206478995 
+❌ => Expected: ❤️ - Got: 1️⃣. Probability = 0.2758009946703787 
+✅ => Expected: ❗ - Got: ❗. Probability = 0.34692670227763567 
+✅ => Expected: 1️⃣ - Got: 1️⃣. Probability = 0.3876643993317994 
+❌ => Expected: ❤️ - Got: 😀. Probability = 0.408935499306528 
+❌ => Expected: 1️⃣ - Got: ❗. Probability = 0.2812243693891406 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.32673257898365343 
+✅ => Expected: ❗ - Got: ❗. Probability = 0.3192687795622558 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.28914103042967 
+✅ => Expected: 😀 - Got: 😀. Probability = 0.40552834290919293 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.26459187191789324 
+✅ => Expected: 🔗 - Got: 🔗. Probability = 0.7773131106280573 
+❌ => Expected: ❗ - Got: 🐶. Probability = 0.4382927547310686 
+✅ => Expected: ❗ - Got: ❗. Probability = 0.3715480538018037 
+❌ => Expected: ✅ - Got: ❗. Probability = 0.28019797744005503 
+✅ => Expected: ❗ - Got: ❗. Probability = 0.47719051835722226 
+✅ => Expected: 👀 - Got: 👀. Probability = 0.9883641521986012 
+✅ => Expected: 🔗 - Got: 🔗. Probability = 0.6886967396265965 
+✅ => Expected: 1️⃣ - Got: 1️⃣. Probability = 0.23514766903622428 
+❌ => Expected: 👀 - Got: ❗. Probability = 0.32393534052291256 
+❌ => Expected: 👀 - Got: ❗. Probability = 0.27530258828268167 
+✅ => Expected: 😀 - Got: 😀. Probability = 0.5481526145172435 
+❌ => Expected: 👀 - Got: 1️⃣. Probability = 0.31874640646255237 
+✅ => Expected: 🔗 - Got: 🔗. Probability = 0.20526916716259935 
+❌ => Expected: 1️⃣ - Got: ❗. Probability = 0.3554229716201099 
+✅ => Expected: 👀 - Got: 👀. Probability = 0.31515667002259046 
+✅ => Expected: 1️⃣ - Got: 1️⃣. Probability = 0.2595954381616951 
+❌ => Expected: ❤️ - Got: 1️⃣. Probability = 0.31098511708351717 
+✅ => Expected: 😀 - Got: 😀. Probability = 0.7593120341201913 
+✅ => Expected: 🔗 - Got: 🔗. Probability = 0.22573666830137795 
+❌ => Expected: 🐶 - Got: 🔗. Probability = 0.3383471412080435 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.5050198460639301 
+✅ => Expected: ❗ - Got: ❗. Probability = 0.5118174669784816 
+✅ => Expected: 👀 - Got: 👀. Probability = 0.25537397201873363 
+❌ => Expected: 😀 - Got: ✅. Probability = 0.26375563406471064 
+❌ => Expected: 😀 - Got: ❤️. Probability = 0.2705942895733641 
+✅ => Expected: 🐶 - Got: 🐶. Probability = 0.42104460645515634 
+✅ => Expected: ❤️ - Got: ❤️. Probability = 0.22884833360685683 
 
 ------------- Prediction probability -------------
 Predictions above 90% = 1 - 1.25%
@@ -93,11 +93,11 @@ Predictions above 50% = 18 - 22.5%
 Correct pre above 50% = 18 - 22.5%
 
 ------------- Prediction per label -------------
-Correct predictions for 1️⃣ = 45.45454545454545%. Correct = 5. Total = 11
-Correct predictions for ✅ = 69.23076923076923%. Correct = 9. Total = 13
-Correct predictions for ❗ = 47.05882352941176%. Correct = 8. Total = 17
-Correct predictions for ❤️ = 66.66666666666666%. Correct = 4. Total = 6
-Correct predictions for 🐶 = 87.5%. Correct = 7. Total = 8
-Correct predictions for 👀 = 100.0%. Correct = 5. Total = 5
+Correct predictions for 1️⃣ = 50.0%. Correct = 5. Total = 10
+Correct predictions for ✅ = 90.0%. Correct = 9. Total = 10
+Correct predictions for ❗ = 80.0%. Correct = 8. Total = 10
+Correct predictions for ❤️ = 40.0%. Correct = 4. Total = 10
+Correct predictions for 🐶 = 70.0%. Correct = 7. Total = 10
+Correct predictions for 👀 = 50.0%. Correct = 5. Total = 10
 Correct predictions for 🔗 = 80.0%. Correct = 8. Total = 10
 Correct predictions for 😀 = 80.0%. Correct = 8. Total = 10
