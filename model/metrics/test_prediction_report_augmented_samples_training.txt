@@ -2,7 +2,7 @@
 ✅ => Expected: 1️⃣ - Got: 1️⃣ 
 ✅ => Expected: 👀 - Got: 👀 
 ✅ => Expected: 👀 - Got: 👀 
-❌ => Expected: 1️⃣ - Got: ❗ 
+✅ => Expected: 1️⃣ - Got: 1️⃣ 
 ✅ => Expected: 1️⃣ - Got: 1️⃣ 
 ✅ => Expected: 😀 - Got: 😀 
 ✅ => Expected: ❤️ - Got: ❤️ 
@@ -22,7 +22,7 @@
 ✅ => Expected: 🔗 - Got: 🔗 
 ✅ => Expected: ❗ - Got: ❗ 
 ✅ => Expected: 🐶 - Got: 🐶 
-❌ => Expected: 🔗 - Got: ✅ 
+✅ => Expected: 🔗 - Got: 🔗 
 ❌ => Expected: 🐶 - Got: ❗ 
 ❌ => Expected: 1️⃣ - Got: ❗ 
 ✅ => Expected: 🐶 - Got: 🐶 
@@ -134,7 +134,7 @@
 ✅ => Expected: 👀 - Got: 👀 
 ✅ => Expected: 1️⃣ - Got: 1️⃣ 
 ❌ => Expected: ❤️ - Got: 1️⃣ 
-✅ => Expected: ❤️ - Got: ❤️ 
+❌ => Expected: ❤️ - Got: ❗ 
 ✅ => Expected: ❗ - Got: ❗ 
 ❌ => Expected: 👀 - Got: 😀 
 ✅ => Expected: 🐶 - Got: 🐶 
@@ -149,8 +149,8 @@
 ✅ => Expected: 1️⃣ - Got: 1️⃣ 
 ✅ => Expected: 🔗 - Got: 🔗 
 ✅ => Expected: ❗ - Got: ❗ 
-✅ => Expected: 👀 - Got: 👀 
-❌ => Expected: 😀 - Got: ✅ 
+❌ => Expected: 👀 - Got: ✅ 
+❌ => Expected: 😀 - Got: ❗ 
 ✅ => Expected: 🔗 - Got: 🔗 
 ✅ => Expected: 😀 - Got: 😀 
 ✅ => Expected: ✅ - Got: ✅ 

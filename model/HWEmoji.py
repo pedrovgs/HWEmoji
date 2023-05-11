@@ -10,6 +10,8 @@ from matplotlib.font_manager import FontProperties
 import time
 from skimage.transform import resize
 import random
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
 
 def prepare_data_set():
     dataset_folder = "../dataset/"
@@ -105,6 +107,7 @@ def augment_raw_sample(raw_sample):
         augmented_samples.append(rotated_sample)
     number_of_noise_samples = range(10)
     rotated_sample = [];
+    np.random.seed(11)
     for _ in number_of_noise_samples:
         for points in raw_sample:
             new_x, new_y = introduce_noise(points["x"], points["y"])
@@ -338,14 +341,24 @@ def main():
     data, labels, original_samples, original_labels, augmented_samlpes, augmented_labels = prepare_data_set()
     print(f'📖 Data set ready with {len(data)} samples asociated to {len(labels)} labels')
     #show_some_data_examples(data, labels, 20)
-    train_and_evaluate_accuracy_with_all_the_data(data, labels)
+    model = train_and_evaluate_accuracy_with_all_the_data(data, labels)
     train_and_evaluate_accuracy_with_augmented_samples_only(original_samples, original_labels, augmented_samlpes, augmented_labels)
+    save_model(model)
     print("✅ Training completed")
+
+def save_model(model):
+    initial_type = [('float_input', FloatTensorType([None, 4]))]
+    onx = convert_sklearn(model, initial_types=initial_type)
+    file_name = "./output/hwemoji.onnx"
+    with open(file_name, "wb") as f:
+        f.write(onx.SerializeToString())
+    print(f'💾 Model saved to {file_name}')
 
 def train_and_evaluate_accuracy_with_all_the_data(data, labels):
     model, data_train, data_test, labels_train, labels_test = train_model(data, labels)
     print(f'💪 Model trained with {len(data_train)} samples. Evaluating model accuracy')
     evaluate_model_accuracy("full_data_set", model, data_train, data_test, labels_train, labels_test)
+    return model
 
 def train_and_evaluate_accuracy_with_augmented_samples_only(original_samples, original_labels, augmented_samples, augmented_labels):
     print("⏲  Starting the training process with augmented samples only")
