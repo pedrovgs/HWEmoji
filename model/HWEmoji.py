@@ -8,12 +8,15 @@ from sklearn import metrics
 import seaborn as sns
 from matplotlib.font_manager import FontProperties
 import time
-from skimage.transform import AffineTransform
 from skimage.transform import resize
 
 def prepare_data_set():
     dataset_folder = "../dataset/"
-    samples = os.listdir(dataset_folder)
+    all_files = os.listdir(dataset_folder)
+    samples = []
+    for file in all_files:
+        if file.endswith(".txt"):
+            samples.append(file)
     data = []
     labels = []
     sample_number = 0
@@ -53,10 +56,10 @@ def prepare_data_set():
     print("    Number of  original samples = " + str(len(original_samples)))
     print("    Number of augmented samples = " + str(len(augmented_samples)))
     print("    Total  number  of   samples = " + str(len(data)))
-    data = crop_data_samples(data, label)
+    data = crop_data_samples(data)
     return (data, labels, original_samples, original_labels, augmented_samples, augmented_labels)
 
-def crop_data_samples(data_samples, label):
+def crop_data_samples(data_samples):
     cropped_samples = []
     for sample in data_samples:
         clean_sample = map_to_zero_or_one(sample)
@@ -321,7 +324,7 @@ def main():
     print("🤓 Preparing trainig data using the files from /dataset")
     data, labels, original_samples, original_labels, augmented_samlpes, augmented_labels = prepare_data_set()
     print(f'📖 Data set ready with {len(data)} samples asociated to {len(labels)} labels')
-    #show_some_data_examples(data, labels, 10)
+    #show_some_data_examples(data, labels, 20)
     train_and_evaluate_accuracy_with_all_the_data(data, labels)
     train_and_evaluate_accuracy_with_augmented_samples_only(original_samples, original_labels, augmented_samlpes, augmented_labels)
     print("✅ Training completed")
