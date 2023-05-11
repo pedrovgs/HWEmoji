@@ -8,12 +8,16 @@ from sklearn import metrics
 import seaborn as sns
 from matplotlib.font_manager import FontProperties
 import time
-from skimage.transform import AffineTransform
 from skimage.transform import resize
+import random
 
 def prepare_data_set():
     dataset_folder = "../dataset/"
-    samples = os.listdir(dataset_folder)
+    all_files = os.listdir(dataset_folder)
+    samples = []
+    for file in all_files:
+        if file.endswith(".txt"):
+            samples.append(file)
     data = []
     labels = []
     sample_number = 0
@@ -53,10 +57,10 @@ def prepare_data_set():
     print("    Number of  original samples = " + str(len(original_samples)))
     print("    Number of augmented samples = " + str(len(augmented_samples)))
     print("    Total  number  of   samples = " + str(len(data)))
-    data = crop_data_samples(data, label)
+    data = crop_data_samples(data)
     return (data, labels, original_samples, original_labels, augmented_samples, augmented_labels)
 
-def crop_data_samples(data_samples, label):
+def crop_data_samples(data_samples):
     cropped_samples = []
     for sample in data_samples:
         clean_sample = map_to_zero_or_one(sample)
@@ -99,7 +103,19 @@ def augment_raw_sample(raw_sample):
             new_x, new_y = rotate_point_around_center(points["x"], points["y"], rotation_angle)
             rotated_sample.append({ "x": new_x, "y": new_y })
         augmented_samples.append(rotated_sample)
+    number_of_noise_samples = range(10)
+    rotated_sample = [];
+    for _ in number_of_noise_samples:
+        for points in raw_sample:
+            new_x, new_y = introduce_noise(points["x"], points["y"])
+            rotated_sample.append({ "x": new_x, "y": new_y })
+        augmented_samples.append(rotated_sample)
     return augmented_samples
+
+def introduce_noise(x, y):
+    newx = x + random.randint(-5, 5)
+    newy = y + random.randint(-5, 5)
+    return (newx, newy)
 
 def rotate_point_around_center(x, y, degrees):
     angle = np.radians(degrees)
@@ -321,7 +337,7 @@ def main():
     print("🤓 Preparing trainig data using the files from /dataset")
     data, labels, original_samples, original_labels, augmented_samlpes, augmented_labels = prepare_data_set()
     print(f'📖 Data set ready with {len(data)} samples asociated to {len(labels)} labels')
-    #show_some_data_examples(data, labels, 10)
+    #show_some_data_examples(data, labels, 20)
     train_and_evaluate_accuracy_with_all_the_data(data, labels)
     train_and_evaluate_accuracy_with_augmented_samples_only(original_samples, original_labels, augmented_samlpes, augmented_labels)
     print("✅ Training completed")
