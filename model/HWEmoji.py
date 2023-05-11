@@ -9,6 +9,7 @@ import seaborn as sns
 from matplotlib.font_manager import FontProperties
 import time
 from skimage.transform import resize
+import random
 
 def prepare_data_set():
     dataset_folder = "../dataset/"
@@ -102,7 +103,19 @@ def augment_raw_sample(raw_sample):
             new_x, new_y = rotate_point_around_center(points["x"], points["y"], rotation_angle)
             rotated_sample.append({ "x": new_x, "y": new_y })
         augmented_samples.append(rotated_sample)
+    number_of_noise_samples = range(10)
+    rotated_sample = [];
+    for _ in number_of_noise_samples:
+        for points in raw_sample:
+            new_x, new_y = introduce_noise(points["x"], points["y"])
+            rotated_sample.append({ "x": new_x, "y": new_y })
+        augmented_samples.append(rotated_sample)
     return augmented_samples
+
+def introduce_noise(x, y):
+    newx = x + random.randint(-5, 5)
+    newy = y + random.randint(-5, 5)
+    return (newx, newy)
 
 def rotate_point_around_center(x, y, degrees):
     angle = np.radians(degrees)
