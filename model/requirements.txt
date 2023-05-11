@@ -4,3 +4,4 @@ matplotlib
 numpy
 seaborn
 scikit-image
+skl2onnx
