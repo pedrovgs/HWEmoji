@@ -343,6 +343,7 @@ def show_some_data_examples(data, labels, number_of_samples):
         plt.show()
 
 def main():
+    random.seed(11)
     print("😃 Initializing HWEmoji training script")
     print("🤓 Preparing trainig data using the files from /dataset")
     data, labels, original_samples, original_labels, augmented_samlpes, augmented_labels = prepare_data_set()
