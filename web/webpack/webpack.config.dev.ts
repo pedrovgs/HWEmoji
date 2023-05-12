@@ -16,7 +16,7 @@ const dev: Configuration & { devServer: DevServerConfiguration } = {
     static: false,
     watchFiles: ["src/**/*"],
   },
-  plugins: [
+  plugins: (config.plugins ?? []).concat([
     new HtmlWebpackPlugin({
       title: "Home",
       hash: true,
@@ -36,7 +36,7 @@ const dev: Configuration & { devServer: DevServerConfiguration } = {
       },
       { reload: true },
     ) as unknown as WebpackPluginInstance,
-  ],
+  ]),
 };
 
 export default dev;

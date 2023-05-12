@@ -28,3 +28,10 @@ export interface DataSample {
 }
 
 export type Points = Point[];
+
+export interface Prediction {
+  emojiLabel: string;
+  probability: number;
+}
+
+export type HWEmojiPredictionResult = Prediction[];

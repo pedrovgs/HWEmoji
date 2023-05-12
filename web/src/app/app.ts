@@ -4,6 +4,7 @@ import { Gemoji } from "gemoji";
 import { Points, WorkMode } from "./domain/model";
 import { defaultAppState, selectEmoji, selectMode } from "./domain/state";
 import { saveDataSample } from "./data/DataSaver";
+import { predictEmoji } from "./ai/HWEmoji";
 
 let appState = defaultAppState;
 
@@ -27,13 +28,14 @@ const componentsListener = () => {
       if (points.length == 0) {
         return;
       }
+      predictEmoji(points);
       const emoji = appState.selectedEmoji;
       const sample = {
         emoji: emoji.emoji,
         emojiName: emoji.names[0],
         points: points,
       };
-      saveDataSample(sample);
+      //saveDataSample(sample);
     },
   };
   return listeners;
