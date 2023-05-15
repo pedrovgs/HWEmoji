@@ -56,6 +56,7 @@ Developed By
 <a href="https://twitter.com/pedro_g_s">
   Pedro's Twitter Account
 </a>
+<br>
 <a href="https://es.linkedin.com/in/pedrovgs">
   Pedro's LinkedIn Account
 </a>
