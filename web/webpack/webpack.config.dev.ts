@@ -22,6 +22,7 @@ const dev: Configuration & { devServer: DevServerConfiguration } = {
       hash: true,
       filename: "index.html",
       chunks: ["main"],
+      publicPath: "auto",
       template: path.join(__dirname, "../public/index.html"),
     }),
     new MiniCssExtractPlugin({

@@ -23,9 +23,6 @@ const prod: Configuration = {
         minimizer: {
           implementation: ImageMinimizerPlugin.imageminMinify,
           options: {
-            output: {
-              publicPath: 'auto',
-            },
             plugins: [
               ["gifsicle", { interlaced: true }],
               ["jpegtran", { progressive: true }],
