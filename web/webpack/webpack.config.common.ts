@@ -12,7 +12,7 @@ export const config: Configuration = {
   output: {
     path: path.resolve(__dirname, "../dist"),
     filename: "[name].bundle.js",
-    publicPath: "/",
+    publicPath: "auto",
   },
   target: "web",
   node: {
