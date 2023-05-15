@@ -25,6 +25,7 @@
     "@types/jsdom": "20.0.1",
     "@types/node": "18.15.12",
     "@types/svgo": "2.6.4",
+    "@types/toastify-js": "^1.11.1",
     "browser-sync": "2.29.1",
     "browser-sync-webpack-plugin": "2.3.0",
     "canvas": "2.11.2",
@@ -65,6 +66,7 @@
     "@types/materialize-css": "^1.0.11",
     "gemoji": "^8.1.0",
     "materialize-css": "^1.0.0-rc.2",
-    "onnxruntime-web": "1.14.0"
+    "onnxruntime-web": "1.14.0",
+    "toastify-js": "^1.12.0"
   }
 }

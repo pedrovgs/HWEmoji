@@ -9,6 +9,7 @@ export type ComponentsListeners = {
   onEmojiSelected: (gemoji: Gemoji) => void;
   onModeSelected: (mode: WorkMode) => void;
   onEmojiSaved: (points: Points) => void;
+  onPredictionRequested: (points: Points) => void;
 };
 
 export interface AppState {
