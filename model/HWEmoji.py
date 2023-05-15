@@ -12,6 +12,7 @@ from skimage.transform import resize
 import random
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
+import onnxruntime as rt
 
 def prepare_data_set():
     dataset_folder = "../dataset/"
@@ -60,7 +61,9 @@ def prepare_data_set():
     print("    Number of augmented samples = " + str(len(augmented_samples)))
     print("    Total  number  of   samples = " + str(len(data)))
     data = crop_data_samples(data)
-    return (data, labels, original_samples, original_labels, augmented_samples, augmented_labels)
+    original_samples = crop_data_samples(original_samples)
+    augmented_samples = crop_data_samples(augmented_samples)
+    return (np.array(data), np.array(labels), np.array(original_samples), np.array(original_labels), np.array(augmented_samples), np.array(augmented_labels))
 
 def crop_data_samples(data_samples):
     cropped_samples = []
@@ -107,7 +110,6 @@ def augment_raw_sample(raw_sample):
         augmented_samples.append(rotated_sample)
     number_of_noise_samples = range(10)
     rotated_sample = [];
-    np.random.seed(11)
     for _ in number_of_noise_samples:
         for points in raw_sample:
             new_x, new_y = introduce_noise(points["x"], points["y"])
@@ -179,11 +181,15 @@ def train_model(data, labels):
     for sample in data:
         flattened_data.append(sample.flatten())
     data_train, data_test, labels_train, labels_test = train_test_split(flattened_data, labels, train_size=0.8, random_state=0)
+    data_train = np.array(data_train)
+    data_test = np.array(data_test)
+    labels_train = np.array(labels_train)
+    labels_test = np.array(labels_test)
     print("🖖 Dataset divided into: ")
-    print("     Data  train size: ", len(data_train))
-    print("     Label train size: ", len(labels_train))
-    print("     Data   test size: ", len(data_test))
-    print("     Label  test size: ", len(labels_test))
+    print(f'     Data  train size: {len(data_train)} and shape ${data_train.shape}')
+    print(f'     Label train size: {len(labels_train)} and shape ${data_train.shape}')
+    print(f'     Data   test size: {len(data_test)} and shape ${data_train.shape}')
+    print(f'     Label  test size: {len(labels_test)} and shape ${data_train.shape}')
     logistic_regression = initialize_and_fit_logistic_regression_model(data_train, labels_train)
     test_element = data_test[0].reshape(1,-1)
     expected_label_for_test_element = labels_test[0]
@@ -196,6 +202,7 @@ def train_model(data, labels):
 def initialize_and_fit_logistic_regression_model(data_train, labels_train):
     logistic_regression = LogisticRegression(n_jobs = os.cpu_count(), verbose = True)
     print("⌛️ Training the model")
+    print(f'⌛️ Training the model with {len(data_train)} samples and shape = {data_train.shape}')
     start_time = time.time()
     logistic_regression.fit(data_train, labels_train)
     end_time = time.time()
@@ -336,23 +343,43 @@ def show_some_data_examples(data, labels, number_of_samples):
         plt.show()
 
 def main():
+    random.seed(11)
     print("😃 Initializing HWEmoji training script")
     print("🤓 Preparing trainig data using the files from /dataset")
     data, labels, original_samples, original_labels, augmented_samlpes, augmented_labels = prepare_data_set()
     print(f'📖 Data set ready with {len(data)} samples asociated to {len(labels)} labels')
     #show_some_data_examples(data, labels, 20)
-    model = train_and_evaluate_accuracy_with_all_the_data(data, labels)
-    train_and_evaluate_accuracy_with_augmented_samples_only(original_samples, original_labels, augmented_samlpes, augmented_labels)
-    save_model(model)
+    model_trained_with_all_data = train_and_evaluate_accuracy_with_all_the_data(data, labels)
+    second_exp_test_data, second_exp_test_labels = train_and_evaluate_accuracy_with_augmented_samples_only(original_samples, original_labels, augmented_samlpes, augmented_labels)
+    save_model(model_trained_with_all_data, second_exp_test_data, second_exp_test_labels)
     print("✅ Training completed")
 
-def save_model(model):
-    initial_type = [('float_input', FloatTensorType([None, 4]))]
-    onx = convert_sklearn(model, initial_types=initial_type)
+def save_model(model, second_exp_test_data, second_exp_test_labels):
+    input_type = FloatTensorType([None, (100*100)])
+    input_name = 'float_input'
+    initial_type = [(input_name, input_type)]
+    onx = convert_sklearn(model, initial_types = initial_type, verbose = 1, options = {type(model): {'zipmap': False}})
     file_name = "./output/hwemoji.onnx"
     with open(file_name, "wb") as f:
         f.write(onx.SerializeToString())
-    print(f'💾 Model saved to {file_name}')
+    with open("../web/public/models/hwemoji.onnx", "wb") as f:
+        f.write(onx.SerializeToString())
+    print(f'💾 Model saved to {file_name} and updated for the web project as well')
+    print(f'Testing ONNX exported model')
+    sess = rt.InferenceSession(file_name, providers= rt.get_available_providers())
+    input_name = sess.get_inputs()[0].name
+    label_name = sess.get_outputs()[0].name
+    print(f"    Model input name='{input_name}' and shape={sess.get_inputs()[0].shape}")
+    print(f"    Model output name='{label_name}' and shape={sess.get_outputs()[0].shape}")
+    input_data = second_exp_test_data.astype(np.float32)
+    print(f'    ONNX model input data shape {input_data.shape}')
+    input_tensor = {input_name: input_data}
+    prediction_result = sess.run([label_name], input_tensor)
+    print(f'    ONNX model predicted {prediction_result[0]}')
+    print(f'    Expected results     {second_exp_test_labels}')
+    print(metrics.confusion_matrix(second_exp_test_labels, prediction_result[0]))
+    print(f'💪 ONNX model ready to be used')
+
 
 def train_and_evaluate_accuracy_with_all_the_data(data, labels):
     model, data_train, data_test, labels_train, labels_test = train_model(data, labels)
@@ -365,12 +392,15 @@ def train_and_evaluate_accuracy_with_augmented_samples_only(original_samples, or
     flattened_augmented_data = []
     for augmented_sample in augmented_samples:
         flattened_augmented_data.append(augmented_sample.flatten())
+    flattened_augmented_data = np.array(flattened_augmented_data)
     flattened_original_data = []
     for original_sample in original_samples:
         flattened_original_data.append(original_sample.flatten())
+    flattened_original_data = np.array(flattened_original_data)
     model = initialize_and_fit_logistic_regression_model(flattened_augmented_data, augmented_labels)
     print(f'💪 Model trained with {len(augmented_samples)} augmented samples. Evaluating model accuracy')
     evaluate_model_accuracy("augmented_samples_training", model, flattened_augmented_data, flattened_original_data, augmented_labels, original_labels)
+    return (flattened_original_data, original_labels)
 
 if __name__ == "__main__":
     main()

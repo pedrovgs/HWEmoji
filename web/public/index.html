@@ -22,19 +22,25 @@
     </div>
     
     <div id="toolbar">
+      <div class="mode-selector">
+        <a id="mode-selector-title" class='dropdown-trigger btn' href='#' data-target='mode-selector'> Mode: 💪 Collect data</a>
+        <ul id='mode-selector' class='dropdown-content'> </ul>  
+      </div>
+
       <div class="emoji-selector">
         <a id="emoji-selector-title" class='dropdown-trigger btn' href='#' data-target='emoji-selector'>Emoji to draw: 😃</a>
         <ul id='emoji-selector' class='dropdown-content'> </ul>  
       </div>
-      <div class="mode-selector">
-        <a id="mode-selector-title" class='dropdown-trigger btn' href='#' data-target='mode-selector'> Mode: 💪 Generate data</a>
-        <ul id='mode-selector' class='dropdown-content'> </ul>  
-      </div>
 
       <a id="save-sample-button" class="waves-ligh btn">💾 Save</a>
+
+      <a id="predict-button" class="waves-ligh btn">🔮 Predict Emoji</a>
+
       <a id="clear-whiteboard-button" class="waves-ligh btn">❌ Clean</a>
     </div>      
     </div>
+    <br>
+    <p id="emojis-supported-list" style="text-align: center;"> Emojis supported for now: </p>
   </div>
 
   <footer class="page-footer light-blue lighten-1">

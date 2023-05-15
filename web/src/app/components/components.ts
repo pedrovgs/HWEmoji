@@ -2,19 +2,73 @@ import { Dropdown } from "materialize-css";
 import { gemoji, Gemoji } from "gemoji";
 import log from "../log/logger";
 import { WorkMode, ComponentsListeners, AppState, Point } from "../domain/model";
+import { emojisSupported } from "../ai/emojis-supported";
 
 export const initUIComponents = async (listeners: ComponentsListeners, appState: AppState): Promise<void> => {
   await initMaterializeCssComponents(listeners);
   const canvas = initializeCanvas();
+  initializeEmojisSupportedList();
   initializeSaveButton(listeners, canvas);
+  initializePredictButton(listeners);
   initializeCleanButton(canvas);
-  updateEmojiPreview(appState.selectedEmoji);
+  updateEmojiPreview(appState.selectedEmoji.emoji);
 };
 
-export const updateEmojiPreview = (gemoji: Gemoji) => {
+export const updateEmojiPreview = (emoji: string) => {
   const emojiPreview = document.getElementById("emoji-sample");
   if (emojiPreview != null) {
-    emojiPreview.textContent = gemoji.emoji;
+    emojiPreview.textContent = emoji;
+  }
+};
+
+export const showCollectDataMode = () => {
+  showSaveButton(true);
+  showEmojiSelector(true);
+  showPredictButton(false);
+  showEmojisSupportedDescription(false);
+};
+
+export const showTestModelMode = () => {
+  showSaveButton(false);
+  showEmojiSelector(false);
+  showPredictButton(true);
+  showEmojisSupportedDescription(true);
+};
+
+const initializeEmojisSupportedList = () => {
+  const emojis = emojisSupported.join("   ");
+  const description = document.getElementById("emojis-supported-list");
+  if (description) {
+    description.textContent = "Emojis supported: " + emojis;
+    description.style.display = "none";
+  }
+};
+
+const showEmojisSupportedDescription = (show: boolean) => {
+  const saveButton = document.getElementById("emojis-supported-list");
+  if (saveButton) {
+    saveButton.style.display = show ? "" : "none";
+  }
+};
+
+const showSaveButton = (show: Boolean) => {
+  const saveButton = document.getElementById("save-sample-button");
+  if (saveButton) {
+    saveButton.style.display = show ? "" : "none";
+  }
+};
+
+const showPredictButton = (show: Boolean) => {
+  const button = document.getElementById("predict-button");
+  if (button) {
+    button.style.display = show ? "" : "none";
+  }
+};
+
+const showEmojiSelector = (show: Boolean) => {
+  const selector = document.getElementsByClassName("emoji-selector")[0] as HTMLElement;
+  if (selector) {
+    selector.hidden = !show;
   }
 };
 
@@ -79,6 +133,17 @@ const initializeSaveButton = (listeners: ComponentsListeners, canvas: HTMLCanvas
   });
 };
 
+const initializePredictButton = (listeners: ComponentsListeners) => {
+  const button = document.getElementById("predict-button");
+  if (button) {
+    button.addEventListener("click", () => {
+      const plainPoints = points.flat();
+      listeners.onPredictionRequested(plainPoints);
+    });
+    button.style.display = "none";
+  }
+};
+
 const initializeCleanButton = (canvas: HTMLCanvasElement) => {
   document.getElementById("clear-whiteboard-button")?.addEventListener("click", () => {
     resetSavedPoints();
@@ -140,7 +205,7 @@ const initModeSelector = (listeners: ComponentsListeners) => {
       selector.appendChild(modeOption);
       modeOption.onclick = () => {
         log(`Mode selected: ${workMode.description}`);
-        selectorTitle.textContent = `Mode option: ${workMode.description}`;
+        selectorTitle.textContent = `Mode: ${workMode.description}`;
         listeners.onModeSelected(workMode.mode);
       };
     });

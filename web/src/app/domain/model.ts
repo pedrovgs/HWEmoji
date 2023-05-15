@@ -9,6 +9,7 @@ export type ComponentsListeners = {
   onEmojiSelected: (gemoji: Gemoji) => void;
   onModeSelected: (mode: WorkMode) => void;
   onEmojiSaved: (points: Points) => void;
+  onPredictionRequested: (points: Points) => void;
 };
 
 export interface AppState {
@@ -28,3 +29,10 @@ export interface DataSample {
 }
 
 export type Points = Point[];
+
+export interface Prediction {
+  emojiLabel: string;
+  probability: number;
+}
+
+export type HWEmojiPredictionResult = Prediction[];

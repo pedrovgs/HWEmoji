@@ -44,7 +44,7 @@ const prod: Configuration = {
       }),
     ],
   },
-  plugins: [
+  plugins: (config.plugins ?? []).concat([
     new HtmlWebpackPlugin({
       title: "Home",
       hash: true,
@@ -57,7 +57,7 @@ const prod: Configuration = {
       filename: "[name].css",
       chunkFilename: "[id].css",
     }),
-  ],
+  ]),
 };
 
 export default prod;

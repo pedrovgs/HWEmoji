@@ -1,7 +1,7 @@
 import { Configuration } from "webpack";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import CopyPlugin from "copy-webpack-plugin";
 import path from "path";
-
 export const baseDirectory = "src";
 
 export const config: Configuration = {
@@ -19,6 +19,14 @@ export const config: Configuration = {
     __dirname: false,
     __filename: false,
   },
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        { from: 'public/models/*.onnx', to: '[name][ext]' },
+        { from: 'node_modules/onnxruntime-web/dist/*.wasm', to: '[name][ext]' }
+      ],
+    }),
+  ],
   module: {
     rules: [
       { test: /\.tsx?$/, use: "ts-loader" },
