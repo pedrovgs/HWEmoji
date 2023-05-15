@@ -358,7 +358,7 @@ def save_model(model, second_exp_test_data, second_exp_test_labels):
     input_type = FloatTensorType([None, (100*100)])
     input_name = 'float_input'
     initial_type = [(input_name, input_type)]
-    onx = convert_sklearn(model, initial_types = initial_type, verbose = 1)
+    onx = convert_sklearn(model, initial_types = initial_type, verbose = 1, options = {type(model): {'zipmap': False}})
     file_name = "./output/hwemoji.onnx"
     with open(file_name, "wb") as f:
         f.write(onx.SerializeToString())
