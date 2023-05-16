@@ -50,7 +50,14 @@ const componentsListener = () => {
       const predictionResult = await predictEmoji(points);
       const sortedPrediction = predictionResult.sort((a, b) => b.probability - a.probability);
       log(`🔮 Prediction result: ${JSON.stringify(sortedPrediction)}`);
-      updateEmojiPreview(sortedPrediction[0].emojiLabel);
+      const firstPredictionProba = sortedPrediction[0].probability;
+      if (firstPredictionProba >= 0.9) {
+        updateEmojiPreview(sortedPrediction[0].emojiLabel, 300);
+      } else if (firstPredictionProba >= 0.7) {
+        updateEmojiPreview(sortedPrediction[0].emojiLabel + " or " + sortedPrediction[1].emojiLabel, 100);
+      } else {
+        updateEmojiPreview("Not sure!", 50);
+      }
       const predictionDescription = sortedPrediction.map((p) => `${p.emojiLabel} - ${p.probability}`);
       predictionDescription.forEach((p) => {
         Toastify({

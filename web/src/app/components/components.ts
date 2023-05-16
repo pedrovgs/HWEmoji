@@ -14,10 +14,11 @@ export const initUIComponents = async (listeners: ComponentsListeners, appState:
   updateEmojiPreview(appState.selectedEmoji.emoji);
 };
 
-export const updateEmojiPreview = (emoji: string) => {
+export const updateEmojiPreview = (preview: string, textSize = 300) => {
   const emojiPreview = document.getElementById("emoji-sample");
   if (emojiPreview != null) {
-    emojiPreview.textContent = emoji;
+    emojiPreview.style.fontSize = `${textSize}px`;
+    emojiPreview.textContent = preview;
   }
 };
 
