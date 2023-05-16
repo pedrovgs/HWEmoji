@@ -1,0 +1,54 @@
+📊 Test probability prediction report for 32 elements
+✅ => Expected: 🔗 - Got: 🔗. Probability = 0.4351379267176319 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.7765383129434339 
+✅ => Expected: 🔗 - Got: 🔗. Probability = 0.44418185350429445 
+✅ => Expected: ❤️ - Got: ❤️. Probability = 0.8209030831097951 
+❌ => Expected: 🐶 - Got: ✅. Probability = 0.3331444061832712 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.40744695224582456 
+✅ => Expected: 👀 - Got: 👀. Probability = 0.24753805850332408 
+✅ => Expected: 👀 - Got: 👀. Probability = 0.6666487380857492 
+❌ => Expected: 🐶 - Got: 🔗. Probability = 0.2245135105611813 
+❌ => Expected: 🐶 - Got: 🔗. Probability = 0.2477226084107992 
+❌ => Expected: 1️⃣ - Got: ✅. Probability = 0.3147845969376892 
+❌ => Expected: 🐶 - Got: 🔗. Probability = 0.22012877891034108 
+❌ => Expected: 🐶 - Got: 😀. Probability = 0.20877688339216957 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.3573536208326109 
+❌ => Expected: 👀 - Got: ✅. Probability = 0.5047326549207724 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.21453031025001648 
+✅ => Expected: 1️⃣ - Got: 1️⃣. Probability = 0.39591119729127033 
+✅ => Expected: 🔗 - Got: 🔗. Probability = 0.7032530790033721 
+✅ => Expected: 1️⃣ - Got: 1️⃣. Probability = 0.25829150946916524 
+✅ => Expected: 1️⃣ - Got: 1️⃣. Probability = 0.37219607037593666 
+❌ => Expected: ❗ - Got: 😀. Probability = 0.2695736516093592 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.31158892536715455 
+❌ => Expected: 🐶 - Got: 👀. Probability = 0.25164494982168517 
+✅ => Expected: ✅ - Got: ✅. Probability = 0.5253487057456501 
+✅ => Expected: ❗ - Got: ❗. Probability = 0.4653062844130541 
+✅ => Expected: 🔗 - Got: 🔗. Probability = 0.7828522983036901 
+❌ => Expected: 1️⃣ - Got: ✅. Probability = 0.3015139751263742 
+❌ => Expected: 🐶 - Got: 👀. Probability = 0.22095289604805066 
+✅ => Expected: ❤️ - Got: ❤️. Probability = 0.8771377354059511 
+❌ => Expected: ❗ - Got: 1️⃣. Probability = 0.26458701094001214 
+✅ => Expected: ❤️ - Got: ❤️. Probability = 0.5821099705045716 
+✅ => Expected: 🐶 - Got: 🐶. Probability = 0.25548779871627525 
+
+------------- Prediction probability -------------
+Predictions above 90% = 0 - 0.0%
+Correct pre above 90% = 0 - 0.0%
+Predictions above 80% = 2 - 6.25%
+Correct pre above 80% = 2 - 6.25%
+Predictions above 70% = 5 - 15.625%
+Correct pre above 70% = 5 - 15.625%
+Predictions above 60% = 6 - 18.75%
+Correct pre above 60% = 6 - 18.75%
+Predictions above 50% = 9 - 28.125%
+Correct pre above 50% = 8 - 25.0%
+
+------------- Prediction per label -------------
+Correct predictions for 1️⃣ = 60.0%. Correct = 3. Total = 5
+Correct predictions for ✅ = 100.0%. Correct = 6. Total = 6
+Correct predictions for ❗ = 33.33333333333333%. Correct = 1. Total = 3
+Correct predictions for ❤️ = 100.0%. Correct = 3. Total = 3
+Correct predictions for 🐶 = 12.5%. Correct = 1. Total = 8
+Correct predictions for 👀 = 66.66666666666666%. Correct = 2. Total = 3
+Correct predictions for 🔗 = 100.0%. Correct = 4. Total = 4

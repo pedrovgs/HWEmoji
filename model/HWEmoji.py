@@ -363,6 +363,7 @@ def main():
     data, labels, original_samples, original_labels, augmented_samlpes, augmented_labels = prepare_data_set()
     print(f'📖 Data set ready with {len(data)} samples asociated to {len(labels)} labels')
     #show_some_data_examples(data, labels, 20)
+    train_and_evaluate_accuracy_with_original_data(original_samples, original_labels)
     train_and_evaluate_accuracy_with_all_the_data(data, labels)
     second_experiment_test_data, second_exp_test_labels = train_and_evaluate_accuracy_with_augmented_samples_only(original_samples, original_labels, augmented_samlpes, augmented_labels)
     model_trained_with_all_data = tran_production_model(data, labels)
@@ -395,6 +396,11 @@ def save_model(model, second_exp_test_data, second_exp_test_labels):
     print(metrics.confusion_matrix(second_exp_test_labels, prediction_result[0]))
     print(f'💪 ONNX model ready to be used')
 
+def train_and_evaluate_accuracy_with_original_data(data, labels):
+    model, data_train, data_test, labels_train, labels_test = train_model(data, labels)
+    print(f'💪 Model trained with original data set {len(data_train)} samples. This data contains no augmented data. Evaluating model accuracy')
+    evaluate_model_accuracy("original_data_set", model, data_train, data_test, labels_train, labels_test)
+    return model
 
 def train_and_evaluate_accuracy_with_all_the_data(data, labels):
     model, data_train, data_test, labels_train, labels_test = train_model(data, labels)
