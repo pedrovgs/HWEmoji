@@ -349,9 +349,10 @@ def main():
     data, labels, original_samples, original_labels, augmented_samlpes, augmented_labels = prepare_data_set()
     print(f'📖 Data set ready with {len(data)} samples asociated to {len(labels)} labels')
     #show_some_data_examples(data, labels, 20)
-    model_trained_with_all_data = train_and_evaluate_accuracy_with_all_the_data(data, labels)
-    second_exp_test_data, second_exp_test_labels = train_and_evaluate_accuracy_with_augmented_samples_only(original_samples, original_labels, augmented_samlpes, augmented_labels)
-    save_model(model_trained_with_all_data, second_exp_test_data, second_exp_test_labels)
+    train_and_evaluate_accuracy_with_all_the_data(data, labels)
+    second_experiment_test_data, second_exp_test_labels = train_and_evaluate_accuracy_with_augmented_samples_only(original_samples, original_labels, augmented_samlpes, augmented_labels)
+    model_trained_with_all_data = tran_production_model(data, labels)
+    save_model(model_trained_with_all_data, second_experiment_test_data, second_exp_test_labels)
     print("✅ Training completed")
 
 def save_model(model, second_exp_test_data, second_exp_test_labels):
@@ -386,6 +387,14 @@ def train_and_evaluate_accuracy_with_all_the_data(data, labels):
     print(f'💪 Model trained with {len(data_train)} samples. Evaluating model accuracy')
     evaluate_model_accuracy("full_data_set", model, data_train, data_test, labels_train, labels_test)
     return model
+
+def tran_production_model(data, labels): 
+    flattened_data = []
+    for sample in data:
+        flattened_data.append(sample.flatten())
+    flattened_data = np.array(flattened_data)
+    return initialize_and_fit_logistic_regression_model(flattened_data, labels)
+    
 
 def train_and_evaluate_accuracy_with_augmented_samples_only(original_samples, original_labels, augmented_samples, augmented_labels):
     print("⏲  Starting the training process with augmented samples only")
