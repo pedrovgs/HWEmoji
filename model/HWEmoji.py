@@ -8,6 +8,9 @@ from sklearn import metrics
 import seaborn as sns
 from matplotlib.font_manager import FontProperties
 import time
+import skimage
+from skimage.transform import AffineTransform
+from matplotlib.transforms import Affine2D
 from skimage.transform import resize
 import random
 from skl2onnx import convert_sklearn
@@ -134,6 +137,17 @@ def augment_transformed_sample(sample):
     augmented_samples = []
     sample_flipped_horizontally = np.fliplr(sample)
     augmented_samples.append(sample_flipped_horizontally)
+    scale_values = [1.30, 1.20, 1.10, 0.9, 0.8, 0.7]
+    for scale in scale_values:
+        matrix = Affine2D().scale(sx=scale, sy=1).get_matrix()
+        scale_transform = AffineTransform(matrix = matrix)
+        rescaled_sample = skimage.transform.warp(sample, scale_transform.inverse)
+        augmented_samples.append(rescaled_sample)
+    for scale in scale_values:
+        matrix = Affine2D().scale(sx=1, sy=scale).get_matrix()
+        scale_transform = AffineTransform(matrix = matrix)
+        rescaled_sample = skimage.transform.warp(sample, scale_transform.inverse)
+        augmented_samples.append(rescaled_sample)
     return augmented_samples
 
 samples_shown = 0
