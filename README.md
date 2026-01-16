@@ -53,7 +53,7 @@ Developed By
 
 * Pedro Vicente Gómez Sánchez - <pedrovicente.gomez@gmail.com>
 
-<a href="https://twitter.com/pedro_g_s">
+<a href="https://x.com/pedro_g_s">
   Pedro's Twitter Account
 </a>
 <br>
